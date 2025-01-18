@@ -11,6 +11,8 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        "deep-blue": "#053262",
+        "aqua-mist": "#C6F5FC"
       },
     },
   },
