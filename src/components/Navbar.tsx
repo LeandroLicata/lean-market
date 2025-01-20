@@ -1,11 +1,21 @@
 import Link from "next/link";
 
 export default function Navbar() {
+  const links = [
+    { href: "/products", label: "Productos" },
+    { href: "/cart", label: "Carrito" },
+    { href: "/about", label: "Acerca de" },
+  ];
+
   return (
     <nav className="bg-deep-blue text-aqua-mist p-4">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center space-x-2">
-          <img src="/images/lean-market-mini.png" alt="Logo" className="h-10 mr-4" />
+          <img
+            src="/images/lean-market-mini.png"
+            alt="Logo"
+            className="h-10 mr-4"
+          />
         </div>
 
         <div className="flex-1 mx-4">
@@ -17,15 +27,11 @@ export default function Navbar() {
         </div>
 
         <div className="space-x-4">
-          <Link href="/products" className="hover:underline">
-            Productos
-          </Link>
-          <Link href="/cart" className="hover:underline">
-            Carrito
-          </Link>
-          <Link href="/about" className="hover:underline">
-            Acerca de
-          </Link>
+          {links.map((link) => (
+            <Link key={link.label} href={link.href} className="hover:underline">
+              {link.label}
+            </Link>
+          ))}
         </div>
       </div>
     </nav>
