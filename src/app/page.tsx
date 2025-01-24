@@ -1,7 +1,9 @@
-import Image from "next/image";
+import PromoSlider from "./home/components/PromoSlider";
 
 export default function Home() {
   return (
-    <h1>Este es el Home</h1>
+    <div>
+      <PromoSlider />
+    </div>
   );
 }
