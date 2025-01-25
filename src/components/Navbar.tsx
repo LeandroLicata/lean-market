@@ -8,7 +8,7 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="bg-deep-blue text-aqua-mist p-4">
+    <nav className="bg-navbar text-primary p-4">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center space-x-2">
           <img
