@@ -5,6 +5,8 @@ import {
   ShoppingCartIcon,
   TruckIcon,
   SparklesIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
 } from "@heroicons/react/24/outline";
 
 const PromoSlider = () => {
@@ -13,19 +15,19 @@ const PromoSlider = () => {
       title: "¡Descuento del 50% en Electrónica!",
       description: "Aprovecha nuestras ofertas exclusivas por tiempo limitado.",
       bgColor: "bg-promo-1",
-      icon: <ShoppingCartIcon  />, // Ícono para este slide
+      icon: <ShoppingCartIcon />,
     },
     {
       title: "2x1 en accesorios tecnológicos",
       description: "Compra dos y paga uno en todos los accesorios.",
       bgColor: "bg-promo-2",
-      icon: <SparklesIcon  />, // Ícono para este slide
+      icon: <SparklesIcon />,
     },
     {
       title: "Envío gratis en todas tus compras",
       description: "Solo válido hasta el domingo. ¡No te lo pierdas!",
       bgColor: "bg-promo-3",
-      icon: <TruckIcon  />, // Ícono para este slide
+      icon: <TruckIcon />,
     },
   ];
 
@@ -62,7 +64,9 @@ const PromoSlider = () => {
             className={`flex-shrink-0 w-full h-64 flex items-center justify-center ${slide.bgColor}`}
           >
             <div className="text-center text-primary">
-              <div className="mb-4 w-16 h-16 mx-auto text-white">{slide.icon}</div>
+              <div className="mb-4 w-16 h-16 mx-auto text-white">
+                {slide.icon}
+              </div>
               <h2 className="text-2xl md:text-4xl font-bold">{slide.title}</h2>
               <p className="mt-2 text-lg">{slide.description}</p>
             </div>
@@ -74,13 +78,13 @@ const PromoSlider = () => {
         onClick={prevSlide}
         className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75"
       >
-        &#8592;
+        <ChevronLeftIcon className="w-8 h-8" />
       </button>
       <button
         onClick={nextSlide}
         className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75"
       >
-        &#8594;
+        <ChevronRightIcon className="w-8 h-8" />
       </button>
 
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
