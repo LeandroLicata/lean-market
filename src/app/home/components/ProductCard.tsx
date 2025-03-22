@@ -1,18 +1,19 @@
 "use client";
+
 import { Product } from "@/types/product";
 
 const ProductCard: React.FC<Product> = ({
   id,
   name,
   description,
-  imageUrl,
+  image_url,
   price,
   brand,
 }) => {
   return (
-    <div className="border p-4 rounded-lg shadow-md">
+    <div className="border p-4 rounded-lg shadow-md bg-white">
       <img
-        src={imageUrl}
+        src={image_url}
         alt={name}
         className="w-full h-40 object-cover rounded-md"
       />
