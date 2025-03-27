@@ -4,7 +4,7 @@ export interface Product {
   description: string;
   image_url: string;
   price: number;
-  brand: {
+  Brands: {
     id: string;
     name: string;
     logo_url: string;

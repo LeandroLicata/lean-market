@@ -20,7 +20,7 @@ export async function GET() {
 
     return NextResponse.json(products, { status: 200 });
   } catch (error) {
-    console.error("Error fetching products:", String(error)); // 👈 Aquí forzamos a string
+    console.error("Error fetching products:", String(error));
 
     return NextResponse.json(
       {

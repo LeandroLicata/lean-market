@@ -8,7 +8,7 @@ const ProductCard: React.FC<Product> = ({
   description,
   image_url,
   price,
-  brand,
+  Brands,
 }) => {
   return (
     <div className="border p-4 rounded-lg shadow-md bg-white">
@@ -21,11 +21,11 @@ const ProductCard: React.FC<Product> = ({
       <p className="text-sm text-gray-600">{description}</p>
       <div className="flex items-center mt-2">
         <img
-          src={brand?.logo_url}
-          alt={brand?.name}
+          src={Brands?.logo_url}
+          alt={Brands?.name}
           className="w-8 h-8 rounded-full mr-2"
         />
-        <span className="text-sm text-gray-700">{brand?.name}</span>
+        <span className="text-sm text-gray-700">{Brands?.name}</span>
       </div>
       <p className="text-lg font-bold mt-2">${price}</p>
     </div>
