@@ -5,7 +5,7 @@ import useProducts from "@/hooks/useProducts";
 import { Product } from "@/types/product";
 
 const ProductsGrid = () => {
-  const { products, isLoading } = useProducts();
+  const { products, isLoading } = useProducts({ type: "featured" });
 
   if (isLoading) {
     return <p className="text-center">Cargando productos...</p>;
