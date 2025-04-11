@@ -10,25 +10,31 @@ import {
 } from "@heroicons/react/24/outline";
 
 const PromoSlider = () => {
+  // const slides = [
+  //   {
+  //     title: "¡Descuento del 50% en Electrónica!",
+  //     description: "Aprovecha nuestras ofertas exclusivas por tiempo limitado.",
+  //     bgColor: "bg-promo-1",
+  //     icon: <ShoppingCartIcon />,
+  //   },
+  //   {
+  //     title: "2x1 en accesorios tecnológicos",
+  //     description: "Compra dos y paga uno en todos los accesorios.",
+  //     bgColor: "bg-promo-2",
+  //     icon: <SparklesIcon />,
+  //   },
+  //   {
+  //     title: "Envío gratis en todas tus compras",
+  //     description: "Solo válido hasta el domingo. ¡No te lo pierdas!",
+  //     bgColor: "bg-promo-3",
+  //     icon: <TruckIcon />,
+  //   },
+  // ];
+
   const slides = [
-    {
-      title: "¡Descuento del 50% en Electrónica!",
-      description: "Aprovecha nuestras ofertas exclusivas por tiempo limitado.",
-      bgColor: "bg-promo-1",
-      icon: <ShoppingCartIcon />,
-    },
-    {
-      title: "2x1 en accesorios tecnológicos",
-      description: "Compra dos y paga uno en todos los accesorios.",
-      bgColor: "bg-promo-2",
-      icon: <SparklesIcon />,
-    },
-    {
-      title: "Envío gratis en todas tus compras",
-      description: "Solo válido hasta el domingo. ¡No te lo pierdas!",
-      bgColor: "bg-promo-3",
-      icon: <TruckIcon />,
-    },
+    "/images/promo 1.png",
+    "/images/promo 2.png",
+    "/images/promo 3.png",
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -53,8 +59,8 @@ const PromoSlider = () => {
   }, []);
 
   return (
-    <div className="relative w-full h-64 overflow-hidden">
-      <div
+    <div className="relative w-full h-96 overflow-hidden">
+      {/* <div
         className="flex transition-transform duration-500 ease-in-out"
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
       >
@@ -70,6 +76,21 @@ const PromoSlider = () => {
               <h2 className="text-2xl md:text-4xl font-bold">{slide.title}</h2>
               <p className="mt-2 text-lg">{slide.description}</p>
             </div>
+          </div>
+        ))}
+      </div> */}
+
+      <div
+        className="flex transition-transform duration-500 ease-in-out"
+        style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+      >
+        {slides.map((image, index) => (
+          <div key={index} className="flex-shrink-0 w-full h-96">
+            <img
+              src={image}
+              alt={`Slide ${index + 1}`}
+              className="w-full h-full object-cover"
+            />
           </div>
         ))}
       </div>

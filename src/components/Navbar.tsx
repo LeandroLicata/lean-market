@@ -14,7 +14,7 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="bg-navbar text-primary p-4">
+    <nav className="bg-navbar text-primary px-4 py-7 font-bold">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center space-x-2">
           <img
@@ -40,7 +40,7 @@ export default function Navbar() {
 
         <div className="hidden md:flex space-x-4">
           {links.map((link) => (
-            <Link key={link.label} href={link.href} className="hover:underline">
+            <Link key={link.label} href={link.href} className="hover:underline hover:text-neon-mint">
               {link.label}
             </Link>
           ))}
