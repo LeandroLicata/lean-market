@@ -1,40 +1,22 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  ShoppingCartIcon,
-  TruckIcon,
-  SparklesIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-} from "@heroicons/react/24/outline";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 
 const PromoSlider = () => {
-  // const slides = [
-  //   {
-  //     title: "¡Descuento del 50% en Electrónica!",
-  //     description: "Aprovecha nuestras ofertas exclusivas por tiempo limitado.",
-  //     bgColor: "bg-promo-1",
-  //     icon: <ShoppingCartIcon />,
-  //   },
-  //   {
-  //     title: "2x1 en accesorios tecnológicos",
-  //     description: "Compra dos y paga uno en todos los accesorios.",
-  //     bgColor: "bg-promo-2",
-  //     icon: <SparklesIcon />,
-  //   },
-  //   {
-  //     title: "Envío gratis en todas tus compras",
-  //     description: "Solo válido hasta el domingo. ¡No te lo pierdas!",
-  //     bgColor: "bg-promo-3",
-  //     icon: <TruckIcon />,
-  //   },
-  // ];
-
   const slides = [
-    "/images/promo 1.png",
-    "/images/promo 2.png",
-    "/images/promo 3.png",
+    {
+      desktop: "/images/promo1.png",
+      mobile: "/images/promo1-mobile.png",
+    },
+    {
+      desktop: "/images/promo2.png",
+      mobile: "/images/promo2-mobile.png",
+    },
+    {
+      desktop: "/images/promo3.png",
+      mobile: "/images/promo3-mobile.png",
+    },
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -54,43 +36,26 @@ const PromoSlider = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       nextSlide();
-    }, 5000);
+    }, 10000);
     return () => clearInterval(timer);
   }, []);
 
   return (
-    <div className="relative w-full h-96 overflow-hidden">
-      {/* <div
-        className="flex transition-transform duration-500 ease-in-out"
-        style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-      >
-        {slides.map((slide, index) => (
-          <div
-            key={index}
-            className={`flex-shrink-0 w-full h-64 flex items-center justify-center ${slide.bgColor}`}
-          >
-            <div className="text-center text-primary">
-              <div className="mb-4 w-16 h-16 mx-auto text-white">
-                {slide.icon}
-              </div>
-              <h2 className="text-2xl md:text-4xl font-bold">{slide.title}</h2>
-              <p className="mt-2 text-lg">{slide.description}</p>
-            </div>
-          </div>
-        ))}
-      </div> */}
-
+    <div className="relative w-full h-64 sm:h-96 overflow-hidden">
       <div
         className="flex transition-transform duration-500 ease-in-out"
         style={{ transform: `translateX(-${currentIndex * 100}%)` }}
       >
         {slides.map((image, index) => (
-          <div key={index} className="flex-shrink-0 w-full h-96">
-            <img
-              src={image}
-              alt={`Slide ${index + 1}`}
-              className="w-full h-full object-cover"
-            />
+          <div key={index} className="flex-shrink-0 w-full h-64 sm:h-96">
+            <picture>
+              <source srcSet={image.mobile} media="(max-width: 639px)" />
+              <img
+                src={image.desktop}
+                alt={`Slide ${index + 1}`}
+                className="w-full h-full object-cover"
+              />
+            </picture>
           </div>
         ))}
       </div>
