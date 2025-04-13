@@ -1,41 +1,51 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchProducts,
   fetchFeaturedProducts,
 } from "@/features/product/productSlice";
 import { AppDispatch, RootState } from "@/store/store";
-import { Product } from "@/types/product";
 
 interface UseProductsOptions {
   type?: "all" | "featured";
 }
 
 const useProducts = ({ type = "all" }: UseProductsOptions = {}) => {
-  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
 
-  const products = useSelector(
-    (state: RootState) => state.product.products
-  ) as Product[];
-  const featuredProducts = useSelector(
-    (state: RootState) => state.product.featuredProducts
-  ) as Product[];
+  const products = useSelector((state: RootState) =>
+    type === "featured"
+      ? state.product.featuredProducts
+      : state.product.products
+  );
 
-  useEffect(() => {
-    setIsLoading(true);
+  const status = useSelector((state: RootState) =>
+    type === "featured" ? state.product.featuredStatus : state.product.status
+  );
+
+  const isLoading = status === "loading";
+  const error =
+    status === "failed" ? "Ocurrió un error al cargar los productos." : null;
+
+  const refetch = () => {
     const fetchAction =
       type === "featured" ? fetchFeaturedProducts() : fetchProducts();
-    dispatch(fetchAction)
-      .then(() => setIsLoading(false))
-      .catch(() => setIsLoading(false));
+    dispatch(fetchAction);
+  };
+
+  useEffect(() => {
+    if (status === "idle") {
+      refetch();
+    }
   }, [dispatch, type]);
 
   return {
-    products: type === "featured" ? featuredProducts : products,
+    products,
     isLoading,
+    error,
+    refetch,
   };
 };
 

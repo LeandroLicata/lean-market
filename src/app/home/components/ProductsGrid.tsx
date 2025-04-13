@@ -1,11 +1,36 @@
 "use client";
 
 import ProductCard from "./ProductCard";
-import useProducts from "@/hooks/useProducts";
 import { Product } from "@/types/product";
 
-const ProductsGrid = () => {
-  const { products, isLoading } = useProducts({ type: "featured" });
+interface ProductsGridProps {
+  products: Product[];
+  isLoading: boolean;
+  error?: string | null;
+  onRetry?: () => void;
+}
+
+const ProductsGrid = ({
+  products,
+  isLoading,
+  error,
+  onRetry,
+}: ProductsGridProps) => {
+  if (error) {
+    return (
+      <div className="text-center">
+        <p className="text-red-500 mb-4">Error: {error}</p>
+        {onRetry && (
+          <button
+            onClick={onRetry}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+          >
+            Reintentar
+          </button>
+        )}
+      </div>
+    );
+  }
 
   if (isLoading) {
     return <p className="text-center">Cargando productos...</p>;
