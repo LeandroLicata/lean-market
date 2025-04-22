@@ -14,8 +14,8 @@ export default function Home() {
     <div>
       <PromoSlider />
 
-      <section className="px-4 sm:px-8 py-6">
-        <h2 className="text-2xl font-semibold px-4">Productos Destacados</h2>
+      <section className="px-4 sm:px-8 py-12">
+        <h2 className="text-2xl font-semibold text-center">Productos Destacados</h2>
         <ProductsGrid
           products={products}
           isLoading={isLoading}

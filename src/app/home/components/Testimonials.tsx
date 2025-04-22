@@ -27,7 +27,7 @@ const testimonials: Testimonial[] = [
 
 export default function Testimonials() {
   return (
-    <section className="bg-gray-100 py-12 px-4 sm:px-8">
+    <section className="py-12 px-4 sm:px-8">
       <h2 className="text-2xl font-semibold text-center mb-8">
         Lo que dicen nuestros clientes
       </h2>
