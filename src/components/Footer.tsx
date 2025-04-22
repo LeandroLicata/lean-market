@@ -5,7 +5,6 @@ export default function Footer() {
   return (
     <footer className="bg-navbar text-primary py-6 border-t border-gray-700 p-10">
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
-        {/* Logo */}
         <div className="flex items-center justify-center pb-2">
           <Image
             src="/images/lean-market.png"
@@ -15,13 +14,12 @@ export default function Footer() {
           />
         </div>
 
-        {/* Contacto */}
         <section>
           <h5 className="uppercase font-bold mb-4 mt-7">Contactame</h5>
           <ul className="space-y-2">
             <li>
               <a
-                href="https://linkedin.com/in/tuusuario"
+                href="https://www.linkedin.com/in/leandro-licata/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm font-medium hover:underline"
@@ -31,7 +29,7 @@ export default function Footer() {
             </li>
             <li>
               <a
-                href="mailto:leandro@email.com"
+                href="mailto:leandrolicata1@gmail.com"
                 className="text-sm font-medium hover:underline"
               >
                 Email
@@ -50,7 +48,6 @@ export default function Footer() {
           </ul>
         </section>
 
-        {/* Usuario */}
         <section>
           <h5 className="uppercase font-bold mb-4 mt-7">Usuario</h5>
           <ul className="space-y-2">
@@ -73,7 +70,6 @@ export default function Footer() {
           </ul>
         </section>
 
-        {/* Navegación */}
         <section>
           <h5 className="uppercase font-bold mb-4 mt-7">Navegación</h5>
           <ul className="space-y-2">
@@ -102,7 +98,6 @@ export default function Footer() {
         </section>
       </div>
 
-      {/* Subfooter */}
       <div className="mt-10 border-t border-gray-600 pt-4 text-center text-sm text-gray-400 space-y-2">
         <p>
           © {new Date().getFullYear()} LeanMarket. Todos los derechos

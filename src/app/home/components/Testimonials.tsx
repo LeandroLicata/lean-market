@@ -1,4 +1,3 @@
-// components/home/Testimonials.tsx
 import Image from "next/image";
 
 type Testimonial = {
