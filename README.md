@@ -48,7 +48,7 @@
    📌 `npx prisma db push` creará las tablas según el archivo `schema.prisma`. Si más adelante trabajás con migraciones, podés usar: 
    
    ```
-   npx prisma migrate dev.
+   npx prisma migrate dev
    ```
 
 5. Levanta el proyecto localmente:
