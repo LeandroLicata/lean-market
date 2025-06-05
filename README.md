@@ -1,36 +1,103 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🛒 LeanMarket
 
-## Getting Started
+**LeanMarket** es un e-commerce en desarrollo centrado en productos electrónicos y accesorios tecnológicos como consolas, auriculares, televisores y teléfonos. Está construido completamente con Next.js, lo que permite manejar tanto el frontend como el backend dentro del mismo proyecto.
 
-First, run the development server:
+### Tecnologías Utilizadas
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Next.js (Frontend + API Routes)
+- TypeScript
+- TailwindCSS
+- Prisma (ORM para PostgreSQL)
+- (Próximamente) NextAuth
+- (Próximamente) Pasarela de pago
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Instrucciones de Uso
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Clona este repositorio en tu máquina local:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   ```bash
+   git clone https://github.com/LeandroLicata/lean-market
+   cd lean-market
+   ```
 
-## Learn More
+2. Instala las dependencias utilizando npm o yarn:
 
-To learn more about Next.js, take a look at the following resources:
+   ```bash
+   npm install
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   o
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   ```bash
+   yarn install
+   ```
 
-## Deploy on Vercel
+3. Crea un archivo `.env.local` en la raíz del proyecto y añade las siguientes variables necesarias para conectar a la base de datos PostgreSQL. Podés usar una instancia en la nube (como Supabase) o una local:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   ```env
+   DATABASE_URL=postgresql://usuario:contraseña@localhost:5432/nombre_basedatos
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. Genera el cliente de Prisma y sincroniza el esquema de base de datos:
+
+   ```bash
+   npx prisma generate
+   npx prisma db push
+   ```
+
+   📌 `npx prisma db push` creará las tablas según el archivo `schema.prisma`. Si más adelante trabajás con migraciones, podés usar: 
+   
+   ```
+   npx prisma migrate dev.
+   ```
+
+5. Levanta el proyecto localmente:
+
+   ```bash
+   npm run dev
+   ```
+
+   o
+
+   ```bash
+   yarn dev
+   ```
+
+6. Abre tu navegador en [http://localhost:3000](http://localhost:3000) para ver la app en acción.
+
+### Funcionalidades Actuales
+
+- Visualización de productos en el Home.
+- Productos destacados seleccionados al azar.
+- Backend conectado a Supabase con rutas funcionales:
+  - Obtener todos los productos.
+  - Obtener 4 productos aleatorios para la sección de destacados.
+- Diseño responsive.
+
+### Funcionalidades en Desarrollo
+
+- CRUD completo de productos (crear, leer, actualizar, eliminar).
+- Página de resultados de búsqueda con filtros.
+- Página de detalle de producto.
+- Formulario para crear y editar productos.
+- Sistema de autenticación con NextAuth.
+- Carrito de compras.
+- Sistema de pagos.
+
+### Estructura del Backend
+
+LeanMarket utiliza un enfoque fullstack con Next.js:
+
+- La lógica del servidor se desarrolla usando API Routes de Next.js (/api), permitiendo crear endpoints personalizados para funcionalidades como autenticación, gestión de productos o pagos.
+- La conexión a la base de datos se gestiona a través de Prisma, un ORM moderno que facilita el acceso y manipulación de datos en PostgreSQL.
+
+### Notas Adicionales
+
+- LeanMarket está pensado como un proyecto integral para demostrar conocimientos en fullstack con tecnologías modernas.
+- El proyecto será publicado próximamente en Vercel.
+
+---
+
+¡Gracias por visitar este proyecto! Si tenés comentarios, sugerencias o querés colaborar, no dudes en contactarme.
+
+📬 **Leandro Licata** – [leandro-licata-portfolio.vercel.app](https://leandro-licata-portfolio.vercel.app/)
