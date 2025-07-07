@@ -1,7 +1,7 @@
 "use client";
 
 import PromoSlider from "./home/components/PromoSlider";
-import ProductsGrid from "./home/components/ProductsGrid";
+import ProductsGrid from "@/components/ProductsGrid";
 import Testimonials from "./home/components/Testimonials";
 import useProducts from "@/hooks/useProducts";
 
