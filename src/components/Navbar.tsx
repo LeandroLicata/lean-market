@@ -16,7 +16,7 @@ export default function Navbar() {
   return (
     <nav className="bg-navbar text-primary px-4 py-7 font-bold">
       <div className="container mx-auto flex justify-between items-center">
-        <div className="flex items-center space-x-2">
+        <Link href="/" className="flex items-center space-x-2">
           <img
             src="/images/lean-market-mini.png"
             alt="Logo grande"
@@ -28,7 +28,7 @@ export default function Navbar() {
             alt="Logo pequeño"
             className="block md:hidden h-8 mr-4"
           />
-        </div>
+        </Link>
 
         <div className="flex flex-1 mx-4">
           <input
@@ -40,7 +40,11 @@ export default function Navbar() {
 
         <div className="hidden md:flex space-x-4">
           {links.map((link) => (
-            <Link key={link.label} href={link.href} className="hover:underline hover:text-neon-mint">
+            <Link
+              key={link.label}
+              href={link.href}
+              className="hover:underline hover:text-neon-mint"
+            >
               {link.label}
             </Link>
           ))}
@@ -65,7 +69,7 @@ export default function Navbar() {
               key={link.label}
               href={link.href}
               className="block px-4 py-2 text-center hover:bg-gray-200"
-              onClick={() => setIsMenuOpen(false)} 
+              onClick={() => setIsMenuOpen(false)}
             >
               {link.label}
             </Link>
