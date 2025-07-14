@@ -13,9 +13,10 @@ export default function Home() {
   return (
     <div>
       <PromoSlider />
-
       <section className="px-4 sm:px-8 py-12">
-        <h2 className="text-2xl font-semibold text-center">Productos Destacados</h2>
+        <h2 className="text-2xl font-semibold text-center">
+          Productos Destacados
+        </h2>
         <ProductsGrid
           products={products}
           isLoading={isLoading}
@@ -23,7 +24,6 @@ export default function Home() {
           onRetry={refetch}
         />
       </section>
-
       <Testimonials />
     </div>
   );

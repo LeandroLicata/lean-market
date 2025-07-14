@@ -3,7 +3,6 @@
 import { Product } from "@/types/product";
 
 const ProductCard: React.FC<Product> = ({
-  id,
   name,
   description,
   image_url,
