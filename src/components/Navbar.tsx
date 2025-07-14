@@ -1,27 +1,18 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { useNavbar } from "@/hooks/useNavbar";
 
 export default function Navbar() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [search, setSearch] = useState("");
-  const router = useRouter();
+  const { search, setSearch, isMenuOpen, toggleMenu, closeMenu, handleSearch } =
+    useNavbar();
 
   const links = [
     { href: "/products", label: "Productos" },
     { href: "/cart", label: "Carrito" },
     { href: "/about", label: "Acerca de" },
   ];
-
-  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // evita el refresh
-    if (search.trim() !== "") {
-      router.push(`/products?query=${encodeURIComponent(search)}`);
-    }
-  };
 
   return (
     <nav className="bg-navbar text-primary px-4 py-7 font-bold">
@@ -65,10 +56,7 @@ export default function Navbar() {
           ))}
         </div>
 
-        <button
-          className="md:hidden p-2"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
+        <button className="md:hidden p-2" onClick={toggleMenu}>
           {isMenuOpen ? (
             <XMarkIcon className="h-6 w-6 text-primary" />
           ) : (
@@ -84,7 +72,7 @@ export default function Navbar() {
               key={link.label}
               href={link.href}
               className="block px-4 py-2 text-center hover:bg-gray-200"
-              onClick={() => setIsMenuOpen(false)}
+              onClick={closeMenu}
             >
               {link.label}
             </Link>
