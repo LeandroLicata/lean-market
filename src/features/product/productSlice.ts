@@ -16,10 +16,14 @@ const initialState: ProductState = {
   featuredStatus: "idle",
 };
 
-export const fetchProducts = createAsyncThunk<Product[]>(
+export const fetchProducts = createAsyncThunk<Product[], string | undefined>(
   "products/fetchProducts",
-  async () => {
-    const response = await axios.get("/api/products");
+  async (query) => {
+    const url = query
+      ? `/api/products?query=${encodeURIComponent(query)}`
+      : "/api/products";
+    const response = await axios.get(url);
+    console.log(response.data)
     return response.data;
   }
 );

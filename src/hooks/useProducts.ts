@@ -10,9 +10,10 @@ import { AppDispatch, RootState } from "@/store/store";
 
 interface UseProductsOptions {
   type?: "all" | "featured";
+  query?: string;
 }
 
-const useProducts = ({ type = "all" }: UseProductsOptions = {}) => {
+const useProducts = ({ type = "all", query }: UseProductsOptions = {}) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const products = useSelector((state: RootState) =>
@@ -29,17 +30,17 @@ const useProducts = ({ type = "all" }: UseProductsOptions = {}) => {
   const error =
     status === "failed" ? "Ocurrió un error al cargar los productos." : null;
 
-  const refetch = () => {
-    const fetchAction =
-      type === "featured" ? fetchFeaturedProducts() : fetchProducts();
-    dispatch(fetchAction);
+  const refetch = (overrideQuery?: string) => {
+    if (type === "featured") {
+      dispatch(fetchFeaturedProducts());
+    } else {
+      dispatch(fetchProducts(overrideQuery ?? query));
+    }
   };
 
   useEffect(() => {
-    if (status === "idle") {
-      refetch();
-    }
-  }, [dispatch, type]);
+    refetch(query);
+  }, [type, query]);
 
   return {
     products,
