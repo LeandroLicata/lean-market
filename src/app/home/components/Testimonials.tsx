@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 type Testimonial = {
   name: string;
   text: string;
@@ -37,12 +35,10 @@ export default function Testimonials() {
             className="bg-white rounded-2xl p-6 shadow-md flex flex-col items-center text-center"
           >
             {t.avatarUrl && (
-              <Image
+              <img
                 src={t.avatarUrl}
                 alt={`Avatar de ${t.name}`}
-                width={64}
-                height={64}
-                className="rounded-full mb-4"
+                className="w-16 h-16 rounded-full mb-4"
               />
             )}
             <p className="text-gray-700 italic">“{t.text}”</p>
