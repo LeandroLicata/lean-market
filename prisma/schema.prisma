@@ -3,35 +3,35 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Brands {
-  id        String     @id @db.Uuid
+  id        String     @id @default(uuid()) @db.Uuid
   name      String     @unique @db.VarChar(255)
   logo_url  String?    @db.VarChar(255)
-  createdAt DateTime   @db.Timestamptz(6)
-  updatedAt DateTime   @db.Timestamptz(6)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
   Products  Products[] @relation("BrandProducts")
 }
 
 model Products {
-  id          String   @id @db.Uuid
+  id          String   @id @default(uuid()) @db.Uuid
   name        String   @unique @db.VarChar(255)
   description String?
   image_url   String?  @db.VarChar(255)
   price       Decimal? @db.Decimal
-  createdAt   DateTime @db.Timestamptz(6)
-  updatedAt   DateTime @db.Timestamptz(6)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
   BrandId     String?  @db.Uuid
   Brands      Brands?  @relation("BrandProducts", fields: [BrandId], references: [id])
 }
 
 model Users {
-  id             String   @id @db.Uuid
+  id             String   @id @default(uuid()) @db.Uuid
   email          String   @unique @db.VarChar(255)
   hashedPassword String   @db.VarChar(255)
-  createdAt      DateTime @db.Timestamptz(6)
-  updatedAt      DateTime @db.Timestamptz(6)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
