@@ -30,3 +30,18 @@ export async function POST(req: Request) {
     );
   }
 }
+
+export async function GET() {
+  try {
+    const brands = await prisma.brands.findMany({
+      orderBy: {
+        name: "asc", // Opcional: ordena alfabéticamente
+      },
+    });
+
+    return NextResponse.json(brands);
+  } catch (error) {
+    console.error("Error fetching brands:", error);
+    return new NextResponse("Error fetching brands", { status: 500 });
+  }
+}
