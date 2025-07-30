@@ -81,7 +81,7 @@ export async function createProduct(request: Request) {
   }
 }
 
-export async function getRandomProducts(request: Request) {
+export async function getRandomProducts() {
   try {
     const products = await prisma.$queryRaw`
       SELECT * FROM "Products"
