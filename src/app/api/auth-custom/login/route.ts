@@ -13,27 +13,27 @@ export async function POST(request: Request) {
       );
     }
 
-    const existingUser = await prisma.users.findUnique({ where: { email } });
+    const user = await prisma.users.findUnique({ where: { email } });
 
-    if (existingUser) {
+    if (!user) {
       return NextResponse.json(
-        { message: "El email ya está registrado" },
-        { status: 409 }
+        { message: "Usuario no encontrado" },
+        { status: 404 }
       );
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const passwordMatch = await bcrypt.compare(password, user.hashedPassword);
 
-    const newUser = await prisma.users.create({
-      data: {
-        email,
-        hashedPassword,
-      },
-    });
+    if (!passwordMatch) {
+      return NextResponse.json(
+        { message: "Contraseña incorrecta" },
+        { status: 401 }
+      );
+    }
 
     return NextResponse.json(
-      { message: "Usuario registrado", userId: newUser.id },
-      { status: 201 }
+      { message: "Login exitoso", userId: user.id },
+      { status: 200 }
     );
   } catch (error) {
     console.error(error);
