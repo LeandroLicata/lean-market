@@ -17,7 +17,7 @@ export default {
         "promo-2": "#007B83",
         "promo-3": "#3A3F58",
         "gray-light": "#EBEBEB",
-        "neon-mint": "00FF84",
+        "neon-mint": "#00FF84",
       },
     },
   },

@@ -1,12 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  Bars3Icon,
+  XMarkIcon,
+  MagnifyingGlassIcon,
+} from "@heroicons/react/24/outline";
 import { useNavbar } from "@/hooks/useNavbar";
+import { useSession, signOut } from "next-auth/react";
 
 export default function Navbar() {
   const { search, setSearch, isMenuOpen, toggleMenu, closeMenu, handleSearch } =
     useNavbar();
+
+  const { data: session } = useSession();
 
   const links = [
     { href: "/products", label: "Productos" },
@@ -15,56 +22,86 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="bg-navbar text-primary px-4 py-7 font-bold">
-      <div className="container mx-auto flex justify-between items-center">
+    <nav className="bg-navbar text-primary px-4 py-4 font-bold">
+      <div className="container mx-auto flex justify-between items-center gap-4">
+        {/* Logo */}
         <Link href="/" className="flex items-center space-x-2">
           <img
             src="/images/lean-market-mini.png"
             alt="Logo grande"
-            className="hidden md:block h-10 mr-4"
+            className="hidden md:block h-10"
           />
-
           <img
             src="/images/logo.png"
             alt="Logo pequeño"
-            className="block md:hidden h-8 mr-4"
+            className="block md:hidden h-8"
           />
         </Link>
 
-        <form onSubmit={handleSearch} className="flex flex-1 mx-4">
+        {/* Barra de búsqueda */}
+        <form onSubmit={handleSearch} className="flex flex-1 max-w-lg">
           <input
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar productos..."
-            className="w-full max-w-lg px-4 py-2 rounded bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 rounded-l-md bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4DD5FF]"
           />
-          <button type="submit" className="bg-blue-500 text-white p-2 rounded">
-            Buscar
+          <button
+            type="submit"
+            className="px-3 flex items-center justify-center border border-[#4DD5FF] text-[#4DD5FF] bg-transparent hover:bg-[#4DD5FF] hover:text-white rounded-r-md transition"
+            aria-label="Buscar"
+          >
+            <MagnifyingGlassIcon className="h-5 w-5" />
           </button>
         </form>
 
-        <div className="hidden md:flex space-x-4">
+        {/* Links desktop */}
+        <div className="hidden md:flex items-center space-x-4">
           {links.map((link) => (
             <Link
               key={link.label}
               href={link.href}
-              className="hover:underline hover:text-neon-mint"
+              className="text-white hover:text-[#4DD5FF] transition"
             >
               {link.label}
             </Link>
           ))}
+
+          {session ? (
+            <button
+              onClick={() => signOut({ callbackUrl: "/" })}
+              className="px-4 py-1.5 border border-[#00E6A8] text-[#00E6A8] rounded-md hover:bg-[#00E6A8] hover:text-white transition text-sm"
+            >
+              Cerrar sesión
+            </button>
+          ) : (
+            <>
+              <Link href="/login">
+                <span className="px-4 py-1.5 border border-[#4DD5FF] text-[#4DD5FF] rounded-md hover:bg-[#4DD5FF] hover:text-white transition text-sm cursor-pointer">
+                  Iniciar sesión
+                </span>
+              </Link>
+              <Link href="/register">
+                <span className="px-4 py-1.5 bg-[#00E6A8] text-white rounded-md hover:bg-[#00C98F] transition text-sm cursor-pointer">
+                  Registrarse
+                </span>
+              </Link>
+            </>
+          )}
         </div>
 
+        {/* Menú móvil */}
         <button className="md:hidden p-2" onClick={toggleMenu}>
           {isMenuOpen ? (
-            <XMarkIcon className="h-6 w-6 text-primary" />
+            <XMarkIcon className="h-6 w-6 text-white" />
           ) : (
-            <Bars3Icon className="h-6 w-6 text-primary" />
+            <Bars3Icon className="h-6 w-6 text-white" />
           )}
         </button>
       </div>
 
+      {/* Menú móvil */}
       {isMenuOpen && (
         <div className="md:hidden mt-4 space-y-2">
           {links.map((link) => (
@@ -77,6 +114,28 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
+
+          {session ? (
+            <button
+              onClick={() => signOut({ callbackUrl: "/" })}
+              className="w-full px-4 py-2 border border-[#00E6A8] text-[#00E6A8] rounded-md hover:bg-[#00E6A8] hover:text-white transition text-sm"
+            >
+              Cerrar sesión
+            </button>
+          ) : (
+            <>
+              <Link href="/login">
+                <span className="block w-full text-center px-4 py-2 border border-[#4DD5FF] text-[#4DD5FF] rounded-md hover:bg-[#4DD5FF] hover:text-white transition text-sm">
+                  Iniciar sesión
+                </span>
+              </Link>
+              <Link href="/register">
+                <span className="block w-full text-center px-4 py-2 bg-[#00E6A8] text-white rounded-md hover:bg-[#00C98F] transition text-sm">
+                  Registrarse
+                </span>
+              </Link>
+            </>
+          )}
         </div>
       )}
     </nav>
