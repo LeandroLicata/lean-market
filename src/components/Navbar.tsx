@@ -45,11 +45,11 @@ export default function Navbar() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar productos..."
-            className="w-full px-3 py-2 rounded-l-md bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4DD5FF]"
+            className="w-full px-3 py-2 rounded-l-md bg-white text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-bright"
           />
           <button
             type="submit"
-            className="px-3 flex items-center justify-center border border-[#4DD5FF] text-[#4DD5FF] bg-transparent hover:bg-[#4DD5FF] hover:text-white rounded-r-md transition"
+            className="px-3 flex items-center justify-center border border-sky-bright text-sky-bright bg-transparent hover:bg-sky-bright hover:text-white rounded-r-md transition"
             aria-label="Buscar"
           >
             <MagnifyingGlassIcon className="h-5 w-5" />
@@ -62,7 +62,7 @@ export default function Navbar() {
             <Link
               key={link.label}
               href={link.href}
-              className="text-white hover:text-[#4DD5FF] transition"
+              className="text-primary hover:text-sky-bright transition"
             >
               {link.label}
             </Link>
@@ -71,19 +71,19 @@ export default function Navbar() {
           {session ? (
             <button
               onClick={() => signOut({ callbackUrl: "/" })}
-              className="px-4 py-1.5 border border-[#00E6A8] text-[#00E6A8] rounded-md hover:bg-[#00E6A8] hover:text-white transition text-sm"
+              className="px-4 py-1.5 border border-mint-bright text-mint-bright rounded-md hover:bg-mint-bright hover:text-white transition text-sm"
             >
               Cerrar sesión
             </button>
           ) : (
             <>
               <Link href="/login">
-                <span className="px-4 py-1.5 border border-[#4DD5FF] text-[#4DD5FF] rounded-md hover:bg-[#4DD5FF] hover:text-white transition text-sm cursor-pointer">
+                <span className="px-4 py-1.5 border border-sky-bright text-sky-bright rounded-md hover:bg-sky-bright hover:text-white transition text-sm cursor-pointer">
                   Iniciar sesión
                 </span>
               </Link>
               <Link href="/register">
-                <span className="px-4 py-1.5 bg-[#00E6A8] text-white rounded-md hover:bg-[#00C98F] transition text-sm cursor-pointer">
+                <span className="px-4 py-1.5 bg-mint-bright text-white rounded-md hover:bg-mint-hover transition text-sm cursor-pointer">
                   Registrarse
                 </span>
               </Link>
@@ -118,19 +118,19 @@ export default function Navbar() {
           {session ? (
             <button
               onClick={() => signOut({ callbackUrl: "/" })}
-              className="w-full px-4 py-2 border border-[#00E6A8] text-[#00E6A8] rounded-md hover:bg-[#00E6A8] hover:text-white transition text-sm"
+              className="w-full px-4 py-2 border border-mint-bright text-mint-bright rounded-md hover:bg-mint-bright hover:text-white transition text-sm"
             >
               Cerrar sesión
             </button>
           ) : (
             <>
               <Link href="/login">
-                <span className="block w-full text-center px-4 py-2 border border-[#4DD5FF] text-[#4DD5FF] rounded-md hover:bg-[#4DD5FF] hover:text-white transition text-sm">
+                <span className="block w-full text-center px-4 py-2 border border-sky-bright text-sky-bright rounded-md hover:bg-sky-bright hover:text-white transition text-sm">
                   Iniciar sesión
                 </span>
               </Link>
               <Link href="/register">
-                <span className="block w-full text-center px-4 py-2 bg-[#00E6A8] text-white rounded-md hover:bg-[#00C98F] transition text-sm">
+                <span className="block w-full text-center px-4 py-2 bg-mint-bright text-white rounded-md hover:bg-mint-hover transition text-sm">
                   Registrarse
                 </span>
               </Link>
