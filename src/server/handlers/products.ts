@@ -109,3 +109,37 @@ export async function getRandomProducts() {
     );
   }
 }
+
+export async function getProductById(
+  _: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const { id } = await params;
+    const product = await prisma.products.findUnique({
+      where: { id },
+      include: {
+        Brands: true,
+      },
+    });
+
+    if (!product) {
+      return NextResponse.json(
+        { message: "Producto no encontrado" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(product, { status: 200 });
+  } catch (error) {
+    console.error("Error fetching product by id:", String(error));
+
+    return NextResponse.json(
+      {
+        message: "Error fetching product by id",
+        error: error instanceof Error ? error.message : JSON.stringify(error),
+      },
+      { status: 500 }
+    );
+  }
+}
