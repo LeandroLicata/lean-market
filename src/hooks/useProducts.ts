@@ -23,7 +23,9 @@ const useProducts = ({ type = "all", query }: UseProductsOptions = {}) => {
   );
 
   const status = useSelector((state: RootState) =>
-    type === "featured" ? state.product.featuredStatus : state.product.status
+    type === "featured"
+      ? state.product.status.featured
+      : state.product.status.list
   );
 
   const isLoading = status === "loading";
