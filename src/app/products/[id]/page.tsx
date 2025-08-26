@@ -100,7 +100,7 @@ export default function ProductDetailPage() {
         <ul className="list-disc list-inside space-y-2 text-gray-700">
           <li>Procesador: AMD Ryzen 9</li>
           <li>Gráfica: NVIDIA RTX 4070</li>
-          <li>Pantalla: 14" QHD 165Hz</li>
+          <li>Pantalla: 14&quot; QHD 165Hz</li>
           <li>Memoria: 16GB RAM</li>
           <li>Almacenamiento: 1TB SSD</li>
         </ul>
