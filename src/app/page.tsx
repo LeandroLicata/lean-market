@@ -6,7 +6,7 @@ import Testimonials from "./home/components/Testimonials";
 import useProducts from "@/hooks/useProducts";
 
 export default function Home() {
-  const { products, isLoading, error, refetch } = useProducts({
+  const { featuredProducts, isLoading, error, refetch } = useProducts({
     type: "featured",
   });
 
@@ -18,7 +18,7 @@ export default function Home() {
           Productos Destacados
         </h2>
         <ProductsGrid
-          products={products}
+          products={featuredProducts}
           isLoading={isLoading}
           error={error}
           onRetry={refetch}

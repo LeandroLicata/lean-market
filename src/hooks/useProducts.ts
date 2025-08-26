@@ -5,47 +5,59 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   fetchProducts,
   fetchFeaturedProducts,
+  fetchProductDetail,
 } from "@/features/product/productSlice";
 import { AppDispatch, RootState } from "@/store/store";
 
 interface UseProductsOptions {
-  type?: "all" | "featured";
-  query?: string;
+  type?: "all" | "featured" | "detail";
+  query?: string; // para filtrar listados
+  id?: string; // para traer un producto en particular
 }
 
-const useProducts = ({ type = "all", query }: UseProductsOptions = {}) => {
+const useProducts = ({ type = "all", query, id }: UseProductsOptions) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const products = useSelector((state: RootState) =>
-    type === "featured"
-      ? state.product.featuredProducts
-      : state.product.products
+  const { products, featuredProducts, productDetail, status } = useSelector(
+    (state: RootState) => state.product
   );
 
-  const status = useSelector((state: RootState) =>
+  const currentStatus =
     type === "featured"
-      ? state.product.status.featured
-      : state.product.status.list
-  );
+      ? status.featured
+      : type === "detail"
+      ? status.detail
+      : status.list;
 
-  const isLoading = status === "loading";
+  const isLoading = currentStatus === "loading";
   const error =
-    status === "failed" ? "Ocurrió un error al cargar los productos." : null;
+    currentStatus === "failed"
+      ? "Ocurrió un error al cargar los productos."
+      : null;
 
-  const refetch = (overrideQuery?: string) => {
+  const refetch = (overrideQuery?: string, overrideId?: string) => {
     if (type === "featured") {
       dispatch(fetchFeaturedProducts());
+    } else if (type === "detail" && (overrideId ?? id)) {
+      dispatch(fetchProductDetail(overrideId ?? id!));
     } else {
       dispatch(fetchProducts(overrideQuery ?? query));
     }
   };
 
   useEffect(() => {
-    refetch(query);
-  }, [type, query]);
+    if (type === "detail") {
+      if (!id) return; // para detalle necesito id
+      refetch(undefined, id);
+    } else {
+      refetch(query);
+    }
+  }, [type, query, id]);
 
   return {
     products,
+    featuredProducts,
+    productDetail,
     isLoading,
     error,
     refetch,

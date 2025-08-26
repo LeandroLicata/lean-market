@@ -8,8 +8,11 @@ export default function ProductsClient() {
   const searchParams = useSearchParams();
   const query = searchParams.get("query") ?? undefined;
 
-  const { products, isLoading, error, refetch } = useProducts({ query });
-  const results = products?.length ?? 0;
+  const { products, isLoading, error, refetch } = useProducts({
+    query,
+  });
+
+  const results = products.length;
 
   return (
     <section className="px-4 sm:px-8 py-12">
