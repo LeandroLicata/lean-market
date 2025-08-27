@@ -26,6 +26,7 @@ model Products {
   updatedAt   DateTime @default(now()) @updatedAt
   BrandId     String?  @db.Uuid
   Brands      Brands?  @relation("BrandProducts", fields: [BrandId], references: [id])
+  specifications Json?
 }
 
 model Users {
