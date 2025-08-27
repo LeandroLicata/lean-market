@@ -92,19 +92,22 @@ export default function ProductDetailPage() {
         </div>
       </div>
 
-      {/* Sección extra (mock por ahora) */}
-      <div className="mt-12 border-t pt-8">
-        <h2 className="text-2xl font-semibold mb-4">
-          Especificaciones técnicas
-        </h2>
-        <ul className="list-disc list-inside space-y-2 text-gray-700">
-          <li>Procesador: AMD Ryzen 9</li>
-          <li>Gráfica: NVIDIA RTX 4070</li>
-          <li>Pantalla: 14&quot; QHD 165Hz</li>
-          <li>Memoria: 16GB RAM</li>
-          <li>Almacenamiento: 1TB SSD</li>
-        </ul>
-      </div>
+      {productDetail.specifications && (
+        <div className="mt-12 border-t pt-8">
+          <h2 className="text-2xl font-semibold mb-4">
+            Especificaciones técnicas
+          </h2>
+          <ul className="list-disc list-inside space-y-2 text-gray-700">
+            {Object.entries(productDetail.specifications).map(
+              ([key, value]) => (
+                <li key={key}>
+                  <span className="font-medium">{key}:</span> {value}
+                </li>
+              )
+            )}
+          </ul>
+        </div>
+      )}
     </section>
   );
 }

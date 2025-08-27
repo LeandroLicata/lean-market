@@ -37,7 +37,8 @@ export async function getProducts(request: Request) {
 export async function createProduct(request: Request) {
   try {
     const body = await request.json();
-    const { name, description, price, brandId, imageUrl } = body;
+    const { name, description, price, brandId, imageUrl, specifications } =
+      body;
 
     if (!name || !price || !brandId) {
       return NextResponse.json(
@@ -64,6 +65,7 @@ export async function createProduct(request: Request) {
         price,
         image_url: imageUrl ?? null,
         BrandId: brandId,
+        specifications: specifications ?? null,
       },
     });
 
