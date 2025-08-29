@@ -11,8 +11,8 @@ import { AppDispatch, RootState } from "@/store/store";
 
 interface UseProductsOptions {
   type?: "all" | "featured" | "detail";
-  query?: string; // para filtrar listados
-  id?: string; // para traer un producto en particular
+  query?: string; 
+  id?: string; 
 }
 
 const useProducts = ({ type = "all", query, id }: UseProductsOptions) => {
@@ -47,7 +47,7 @@ const useProducts = ({ type = "all", query, id }: UseProductsOptions) => {
 
   useEffect(() => {
     if (type === "detail") {
-      if (!id) return; // para detalle necesito id
+      if (!id) return; 
       refetch(undefined, id);
     } else {
       refetch(query);
