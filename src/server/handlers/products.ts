@@ -4,17 +4,27 @@ import { prisma } from "@/lib/prisma";
 export async function getProducts(request: Request) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get("query");
+  const brandId = searchParams.get("brandId");
 
   try {
     const products = await prisma.products.findMany({
-      where: query
-        ? {
-            name: {
-              contains: query,
-              mode: "insensitive",
-            },
-          }
-        : undefined,
+      where: {
+        AND: [
+          query
+            ? {
+                name: {
+                  contains: query,
+                  mode: "insensitive",
+                },
+              }
+            : {},
+          brandId
+            ? {
+                BrandId: brandId,
+              }
+            : {},
+        ],
+      },
       include: {
         Brands: true,
       },
@@ -33,6 +43,7 @@ export async function getProducts(request: Request) {
     );
   }
 }
+
 
 export async function createProduct(request: Request) {
   try {
