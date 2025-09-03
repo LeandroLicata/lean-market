@@ -22,13 +22,20 @@ const initialState: ProductState = {
   },
 };
 
-export const fetchProducts = createAsyncThunk<Product[], string | undefined>(
+interface FetchProductsArgs {
+  query?: string;
+  brandId?: string;
+}
+
+export const fetchProducts = createAsyncThunk<Product[], FetchProductsArgs>(
   "products/fetchProducts",
-  async (query) => {
-    const url = query
-      ? `/api/products?query=${encodeURIComponent(query)}`
-      : "/api/products";
-    const response = await axios.get(url);
+  async ({ query, brandId }) => {
+    const params = new URLSearchParams();
+
+    if (query) params.append("query", query);
+    if (brandId) params.append("brandId", brandId);
+
+    const response = await axios.get(`/api/products?${params.toString()}`);
     return response.data;
   }
 );
@@ -54,7 +61,6 @@ const productSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    // ---- GET ALL PRODUCTS ----
     builder.addCase(fetchProducts.pending, (state) => {
       state.status.list = "loading";
     });
@@ -66,7 +72,6 @@ const productSlice = createSlice({
       state.status.list = "failed";
     });
 
-    // ---- GET FEATURED PRODUCTS ----
     builder.addCase(fetchFeaturedProducts.pending, (state) => {
       state.status.featured = "loading";
     });
@@ -78,7 +83,6 @@ const productSlice = createSlice({
       state.status.featured = "failed";
     });
 
-    // ---- GET PRODUCT DETAIL ----
     builder.addCase(fetchProductDetail.pending, (state) => {
       state.status.detail = "loading";
     });

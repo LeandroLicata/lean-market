@@ -6,7 +6,6 @@ export async function createBrand(req: Request) {
     const body = await req.json();
     const { name, logo_url } = body;
 
-    // Validación manual básica
     if (!name || typeof name !== "string") {
       return NextResponse.json(
         { error: "El nombre de la marca es requerido y debe ser un string." },
@@ -17,7 +16,7 @@ export async function createBrand(req: Request) {
     const brand = await prisma.brands.create({
       data: {
         name,
-        logo_url: logo_url || null, // opcional
+        logo_url: logo_url || null,
       },
     });
 
@@ -35,7 +34,7 @@ export async function getBrands() {
   try {
     const brands = await prisma.brands.findMany({
       orderBy: {
-        name: "asc", // Opcional: ordena alfabéticamente
+        name: "asc", 
       },
     });
 
