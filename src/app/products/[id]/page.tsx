@@ -24,7 +24,7 @@ export default function ProductDetailPage() {
       <div className="flex flex-col justify-center items-center py-20">
         <p className="text-red-500 font-medium">Error al cargar el producto</p>
         <button
-          onClick={() => refetch(id)}
+          onClick={() => refetch()}
           className="mt-4 px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-md transition"
         >
           Reintentar
@@ -44,7 +44,6 @@ export default function ProductDetailPage() {
   return (
     <section className="max-w-5xl mx-auto px-4 sm:px-8 py-12">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
-        {/* Imagen */}
         <div className="flex justify-center">
           <img
             src={productDetail.image_url}
@@ -53,9 +52,7 @@ export default function ProductDetailPage() {
           />
         </div>
 
-        {/* Detalles */}
         <div>
-          {/* Marca */}
           {productDetail.Brands && (
             <div className="flex items-center gap-3 mb-5">
               <img
@@ -69,23 +66,19 @@ export default function ProductDetailPage() {
             </div>
           )}
 
-          {/* Nombre del producto */}
           <h1 className="text-4xl font-extrabold mb-4 text-gray-900">
             {productDetail.name}
           </h1>
 
-          {/* Descripción */}
           <p className="text-lg text-gray-600 leading-relaxed mb-6">
             {productDetail.description}
           </p>
 
-          {/* Precio */}
           <p className="text-3xl font-bold text-green-600 mb-8">
             ${productDetail.price}
             <span className="text-sm text-gray-500 ml-1">USD</span>
           </p>
 
-          {/* Botón */}
           <button className="px-8 py-3 flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white rounded-xl shadow-md transition transform hover:scale-105">
             🛒 Agregar al carrito
           </button>

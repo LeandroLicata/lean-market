@@ -9,7 +9,8 @@ export default function ProductsClient() {
   const query = searchParams.get("query") ?? undefined;
 
   const { products, isLoading, error, refetch } = useProducts({
-    query,
+    type: "all",
+    filters: { query },
   });
 
   const results = products.length;
@@ -18,14 +19,15 @@ export default function ProductsClient() {
     <section className="px-4 sm:px-8 py-12">
       {query ? (
         <h2 className="text-2xl font-semibold text-center">
-          {results} Resultados de búsqueda para {query}
+          {results} Resultados de búsqueda para "{query}"
         </h2>
       ) : null}
+
       <ProductsGrid
         products={products}
         isLoading={isLoading}
         error={error}
-        onRetry={() => refetch(query)}
+        onRetry={refetch}
       />
     </section>
   );

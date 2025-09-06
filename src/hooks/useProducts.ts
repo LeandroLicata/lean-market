@@ -9,13 +9,25 @@ import {
 } from "@/features/product/productSlice";
 import { AppDispatch, RootState } from "@/store/store";
 
-interface UseProductsOptions {
-  type?: "all" | "featured" | "detail";
-  query?: string; 
-  id?: string; 
+interface ProductFilters {
+  query?: string;
+  brandId?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  sortBy?: "price_asc" | "price_desc" | "name_asc" | "name_desc";
 }
 
-const useProducts = ({ type = "all", query, id }: UseProductsOptions) => {
+interface UseProductsOptions {
+  type?: "all" | "featured" | "detail";
+  filters?: ProductFilters;
+  id?: string;
+}
+
+const useProducts = ({
+  type = "all",
+  filters = {},
+  id,
+}: UseProductsOptions) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { products, featuredProducts, productDetail, status } = useSelector(
@@ -35,24 +47,19 @@ const useProducts = ({ type = "all", query, id }: UseProductsOptions) => {
       ? "Ocurrió un error al cargar los productos."
       : null;
 
-  const refetch = (overrideQuery?: string, overrideId?: string) => {
+  const refetch = () => {
     if (type === "featured") {
       dispatch(fetchFeaturedProducts());
-    } else if (type === "detail" && (overrideId ?? id)) {
-      dispatch(fetchProductDetail(overrideId ?? id!));
+    } else if (type === "detail" && id) {
+      dispatch(fetchProductDetail(id));
     } else {
-      dispatch(fetchProducts(overrideQuery ?? query));
+      dispatch(fetchProducts(filters));
     }
   };
 
   useEffect(() => {
-    if (type === "detail") {
-      if (!id) return; 
-      refetch(undefined, id);
-    } else {
-      refetch(query);
-    }
-  }, [type, query, id]);
+    refetch();
+  }, [type, id, JSON.stringify(filters)]);
 
   return {
     products,
