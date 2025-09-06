@@ -19,7 +19,7 @@ export default function ProductsClient() {
     <section className="px-4 sm:px-8 py-12">
       {query ? (
         <h2 className="text-2xl font-semibold text-center">
-          {results} Resultados de búsqueda para "{query}"
+          {results} Resultados de búsqueda para &quot;{query}&quot;
         </h2>
       ) : null}
 
