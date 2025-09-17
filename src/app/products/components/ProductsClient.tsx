@@ -7,10 +7,11 @@ import { useSearchParams } from "next/navigation";
 export default function ProductsClient() {
   const searchParams = useSearchParams();
   const query = searchParams.get("query") ?? undefined;
-
+  const brandId = searchParams.get("brandId") ?? undefined;
+  
   const { products, isLoading, error, refetch } = useProducts({
     type: "all",
-    filters: { query },
+    filters: { query, brandId },
   });
 
   const results = products.length;

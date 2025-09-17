@@ -5,7 +5,6 @@ import FiltersSidebar from "./components/FilterSidebar";
 export default function Page() {
   return (
     <div className="flex min-h-screen">
-      {/* Sidebar fija en desktop */}
       <div className="hidden md:block">
         <Suspense
           fallback={
@@ -16,11 +15,11 @@ export default function Page() {
         </Suspense>
       </div>
 
-      {/* Productos */}
       <div className="flex-1">
-        {/* Botón para abrir filtros en mobile */}
         <div className="md:hidden p-2 border-b">
-          <FiltersSidebar mobile />
+          <Suspense fallback={<div>Cargando filtros...</div>}>
+            <FiltersSidebar mobile />
+          </Suspense>
         </div>
 
         <Suspense

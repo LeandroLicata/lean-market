@@ -3,18 +3,31 @@
 import { useState } from "react";
 import { FiFilter } from "react-icons/fi";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
-import { useFilters } from "@/hooks/useFilters";
+import useBrands from "@/hooks/useBrands";
+import { useRouter, useSearchParams } from "next/navigation";
 
-interface FiltersSidebarProps {
-  mobile?: boolean;
-}
-
-export default function FiltersSidebar({
-  mobile = false,
-}: FiltersSidebarProps) {
+export default function FiltersSidebar({ mobile = false }) {
   const [open, setOpen] = useState(mobile ? false : true);
 
-  const { query, setQuery, brandId, setBrandId, applyFilters } = useFilters();
+  const { brands, isLoading, error } = useBrands();
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Valores actuales desde la URL
+  const queryParam = searchParams.get("query") ?? "";
+  const brandParam = searchParams.get("brandId") ?? "";
+
+  // Handlers para actualizar URL
+  const updateFilter = (key: string, value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value) {
+      params.set(key, value);
+    } else {
+      params.delete(key);
+    }
+    router.push(`products/?${params.toString()}`);
+  };
 
   return (
     <aside
@@ -22,6 +35,7 @@ export default function FiltersSidebar({
         open ? "w-64" : "w-14"
       } bg-gray-50 border-r transition-all duration-300 flex flex-col h-screen`}
     >
+      {/* Header */}
       <div className="flex items-center justify-between p-4 border-b">
         {open && <h2 className="font-semibold text-lg">Filtros</h2>}
         <button
@@ -36,6 +50,7 @@ export default function FiltersSidebar({
         </button>
       </div>
 
+      {/* Contenido */}
       {open && (
         <div className="flex-1 p-4 space-y-6 overflow-y-auto">
           {/* Buscar */}
@@ -43,8 +58,8 @@ export default function FiltersSidebar({
             <label className="block text-sm font-medium mb-1">Buscar</label>
             <input
               type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              defaultValue={queryParam}
+              onChange={(e) => updateFilter("query", e.target.value)}
               className="w-full border rounded p-2"
               placeholder="Ej: notebook"
             />
@@ -53,24 +68,25 @@ export default function FiltersSidebar({
           {/* Marca */}
           <div>
             <label className="block text-sm font-medium mb-1">Marca</label>
-            <select
-              value={brandId}
-              onChange={(e) => setBrandId(e.target.value)}
-              className="w-full border rounded p-2"
-            >
-              <option value="">Todas</option>
-              <option value="asus">Asus</option>
-              <option value="lenovo">Lenovo</option>
-              <option value="apple">Apple</option>
-            </select>
+            {isLoading ? (
+              <p className="text-sm text-gray-500">Cargando...</p>
+            ) : error ? (
+              <p className="text-sm text-red-500">{error}</p>
+            ) : (
+              <select
+                value={brandParam}
+                onChange={(e) => updateFilter("brandId", e.target.value)}
+                className="w-full border rounded p-2"
+              >
+                <option value="">Todas</option>
+                {brands.map((brand) => (
+                  <option key={brand.id} value={brand.id}>
+                    {brand.name}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
-
-          <button
-            onClick={applyFilters}
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
-          >
-            Aplicar filtros
-          </button>
         </div>
       )}
     </aside>
