@@ -8,7 +8,7 @@
 - TypeScript
 - TailwindCSS
 - Prisma (ORM para PostgreSQL)
-- (Próximamente) NextAuth
+- NextAuth
 - (Próximamente) Pasarela de pago
 
 ### Instrucciones de Uso
@@ -72,15 +72,15 @@
 - Backend conectado a Supabase con rutas funcionales:
   - Obtener todos los productos.
   - Obtener 4 productos aleatorios para la sección de destacados.
+- CRUD completo de productos (crear, leer, actualizar, eliminar).
 - Diseño responsive.
+- Página de detalle de producto.
+- Sistema de autenticación con NextAuth.
+- Página de resultados de búsqueda con filtros.
 
 ### Funcionalidades en Desarrollo
 
-- CRUD completo de productos (crear, leer, actualizar, eliminar).
-- Página de resultados de búsqueda con filtros.
-- Página de detalle de producto.
 - Formulario para crear y editar productos.
-- Sistema de autenticación con NextAuth.
 - Carrito de compras.
 - Sistema de pagos.
 
@@ -94,7 +94,7 @@ LeanMarket utiliza un enfoque fullstack con Next.js:
 ### Notas Adicionales
 
 - LeanMarket está pensado como un proyecto integral para demostrar conocimientos en fullstack con tecnologías modernas.
-- El proyecto será publicado próximamente en Vercel.
+- El proyecto está publicado en Vercel. **Link:** [lean-market.vercel.app](https://lean-market.vercel.app/)
 
 ---
 
