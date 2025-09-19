@@ -1,30 +1,30 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 export async function getProducts(request: Request) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get("query");
   const brandId = searchParams.get("brandId");
+  const minPrice = searchParams.get("minPrice");
+  const maxPrice = searchParams.get("maxPrice");
+
+  const filters: Prisma.ProductsWhereInput = {};
+
+  if (query) filters.name = { contains: query, mode: "insensitive" };
+
+  if (brandId) filters.BrandId = brandId;
+
+  if (minPrice || maxPrice) {
+    filters.price = {
+      ...(minPrice && { gte: Number(minPrice) }),
+      ...(maxPrice && { lte: Number(maxPrice) }),
+    };
+  }
 
   try {
     const products = await prisma.products.findMany({
-      where: {
-        AND: [
-          query
-            ? {
-                name: {
-                  contains: query,
-                  mode: "insensitive",
-                },
-              }
-            : {},
-          brandId
-            ? {
-                BrandId: brandId,
-              }
-            : {},
-        ],
-      },
+      where: filters,
       include: {
         Brands: true,
       },
@@ -43,7 +43,6 @@ export async function getProducts(request: Request) {
     );
   }
 }
-
 
 export async function createProduct(request: Request) {
   try {
