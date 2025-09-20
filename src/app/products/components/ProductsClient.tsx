@@ -8,10 +8,14 @@ export default function ProductsClient() {
   const searchParams = useSearchParams();
   const query = searchParams.get("query") ?? undefined;
   const brandId = searchParams.get("brandId") ?? undefined;
-  
+  const minPriceRaw = parseFloat(searchParams.get("minPrice") ?? "");
+  const maxPriceRaw = parseFloat(searchParams.get("maxPrice") ?? "");
+  const minPrice = isNaN(minPriceRaw) ? undefined : minPriceRaw;
+  const maxPrice = isNaN(maxPriceRaw) ? undefined : maxPriceRaw;
+
   const { products, isLoading, error, refetch } = useProducts({
     type: "all",
-    filters: { query, brandId },
+    filters: { query, brandId, minPrice, maxPrice },
   });
 
   const results = products.length;
