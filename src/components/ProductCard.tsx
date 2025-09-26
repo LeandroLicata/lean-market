@@ -16,7 +16,7 @@ const ProductCard: React.FC<Product> = ({
       <div
         className="border p-4 rounded-lg shadow-md bg-white 
                    cursor-pointer transition-transform duration-200 
-                   hover:shadow-lg hover:scale-105"
+                   hover:shadow-lg hover:scale-105 h-full flex flex-col"
       >
         <img
           src={image_url}
@@ -24,7 +24,7 @@ const ProductCard: React.FC<Product> = ({
           className="w-full h-40 object-cover rounded-md"
         />
         <h2 className="text-lg font-semibold mt-2">{name}</h2>
-        <p className="text-sm text-gray-600 line-clamp-2">{description}</p>
+        <p className="text-sm text-gray-600 line-clamp-2 flex-grow">{description}</p>
 
         {Brands && (
           <div className="flex items-center mt-2">
