@@ -54,13 +54,13 @@ export default function ProductDetailPage() {
 
         <div>
           {productDetail.Brands && (
-            <div className="flex items-center gap-3 mb-5">
+            <div className="flex items-center gap-4 mb-5">
               <img
                 src={productDetail.Brands.logo_url}
                 alt={productDetail.Brands.name}
-                className="w-10 h-10 object-contain"
+                className="w-14 h-14 object-contain"
               />
-              <span className="text-lg font-medium text-gray-700">
+              <span className="text-xl font-semibold text-gray-800">
                 {productDetail.Brands.name}
               </span>
             </div>

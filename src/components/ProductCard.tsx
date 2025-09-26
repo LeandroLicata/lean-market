@@ -24,16 +24,22 @@ const ProductCard: React.FC<Product> = ({
           className="w-full h-40 object-cover rounded-md"
         />
         <h2 className="text-lg font-semibold mt-2">{name}</h2>
-        <p className="text-sm text-gray-600 line-clamp-2 flex-grow">{description}</p>
+        <p className="text-sm text-gray-600 line-clamp-2 flex-grow">
+          {description}
+        </p>
 
         {Brands && (
-          <div className="flex items-center mt-2">
-            <img
-              src={Brands?.logo_url}
-              alt={Brands?.name}
-              className="w-8 h-8 rounded-full mr-2"
-            />
-            <span className="text-sm text-gray-700">{Brands?.name}</span>
+          <div className="flex items-center gap-2 mt-2">
+            {/* Contenedor SOLO para el logo */}
+            <div className="w-12 h-6 flex items-center justify-center">
+              <img
+                src={Brands.logo_url}
+                alt={Brands.name}
+                className="max-h-full max-w-full object-contain"
+              />
+            </div>
+            {/* Nombre de la marca */}
+            <span className="text-xs text-gray-500 italic">{Brands.name}</span>
           </div>
         )}
 
