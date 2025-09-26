@@ -8,8 +8,15 @@ export async function getProducts(request: Request) {
   const brandId = searchParams.get("brandId");
   const minPrice = searchParams.get("minPrice");
   const maxPrice = searchParams.get("maxPrice");
+  const page = Number(searchParams.get("page")) || 1;
+  const limit = Number(searchParams.get("limit")) || 8;
 
   const filters: Prisma.ProductsWhereInput = {};
+
+  const skip = (page - 1) * limit;
+
+  const totalProducts = await prisma.products.count({ where: filters });
+  const totalPages = Math.ceil(totalProducts / limit);
 
   if (query) filters.name = { contains: query, mode: "insensitive" };
 
@@ -25,12 +32,15 @@ export async function getProducts(request: Request) {
   try {
     const products = await prisma.products.findMany({
       where: filters,
-      include: {
-        Brands: true,
-      },
+      include: { Brands: true },
+      skip,
+      take: limit,
     });
 
-    return NextResponse.json(products, { status: 200 });
+    return NextResponse.json(
+      { products, totalPages, currentPage: page },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error fetching products:", String(error));
 
