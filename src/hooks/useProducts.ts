@@ -15,6 +15,7 @@ interface ProductFilters {
   minPrice?: number;
   maxPrice?: number;
   sortBy?: "price_asc" | "price_desc" | "name_asc" | "name_desc";
+  page?: number;
 }
 
 interface UseProductsOptions {
@@ -30,9 +31,14 @@ const useProducts = ({
 }: UseProductsOptions) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { products, featuredProducts, productDetail, status } = useSelector(
-    (state: RootState) => state.product
-  );
+  const {
+    products,
+    featuredProducts,
+    productDetail,
+    status,
+    currentPage,
+    totalPages,
+  } = useSelector((state: RootState) => state.product);
 
   const currentStatus =
     type === "featured"
@@ -66,6 +72,8 @@ const useProducts = ({
     featuredProducts,
     productDetail,
     isLoading,
+    currentPage,
+    totalPages,
     error,
     refetch,
   };

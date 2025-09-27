@@ -9,6 +9,8 @@ interface ProductState {
   featuredProducts: Product[];
   productDetail: Product | null;
   status: Record<"list" | "featured" | "detail", Status>;
+  totalPages: number;
+  currentPage: number;
 }
 
 const initialState: ProductState = {
@@ -20,7 +22,15 @@ const initialState: ProductState = {
     featured: "idle",
     detail: "idle",
   },
+  totalPages: 0,
+  currentPage: 1,
 };
+
+interface FetchProductsResponse {
+  products: Product[];
+  totalPages: number;
+  currentPage: number;
+}
 
 export interface FetchProductsArgs {
   query?: string;
@@ -28,11 +38,15 @@ export interface FetchProductsArgs {
   minPrice?: number;
   maxPrice?: number;
   sortBy?: "price_asc" | "price_desc" | "name_asc" | "name_desc";
+  page?: number;
 }
 
-export const fetchProducts = createAsyncThunk<Product[], FetchProductsArgs>(
+export const fetchProducts = createAsyncThunk<
+  FetchProductsResponse,
+  FetchProductsArgs
+>(
   "products/fetchProducts",
-  async ({ query, brandId, minPrice, maxPrice, sortBy }) => {
+  async ({ query, brandId, minPrice, maxPrice, sortBy, page }) => {
     const params = new URLSearchParams();
 
     if (query) params.append("query", query);
@@ -40,6 +54,7 @@ export const fetchProducts = createAsyncThunk<Product[], FetchProductsArgs>(
     if (minPrice !== undefined) params.append("minPrice", String(minPrice));
     if (maxPrice !== undefined) params.append("maxPrice", String(maxPrice));
     if (sortBy) params.append("sortBy", sortBy);
+    if (page) params.append("page", String(page));
 
     const response = await axios.get(`/api/products?${params.toString()}`);
     return response.data;
@@ -72,7 +87,9 @@ const productSlice = createSlice({
     });
     builder.addCase(fetchProducts.fulfilled, (state, action) => {
       state.status.list = "succeeded";
-      state.products = action.payload;
+      state.products = action.payload.products;
+      state.totalPages = action.payload.totalPages;
+      state.currentPage = action.payload.currentPage;
     });
     builder.addCase(fetchProducts.rejected, (state) => {
       state.status.list = "failed";

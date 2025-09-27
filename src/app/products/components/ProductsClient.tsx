@@ -2,21 +2,23 @@
 
 import ProductsGrid from "@/components/ProductsGrid";
 import useProducts from "@/hooks/useProducts";
-import { useSearchParams } from "next/navigation";
+import Pagination from "@/components/Paginations";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function ProductsClient() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const query = searchParams.get("query") ?? undefined;
   const brandId = searchParams.get("brandId") ?? undefined;
-  const minPriceRaw = parseFloat(searchParams.get("minPrice") ?? "");
-  const maxPriceRaw = parseFloat(searchParams.get("maxPrice") ?? "");
-  const minPrice = isNaN(minPriceRaw) ? undefined : minPriceRaw;
-  const maxPrice = isNaN(maxPriceRaw) ? undefined : maxPriceRaw;
+  const minPrice = Number(searchParams.get("minPrice")) || undefined;
+  const maxPrice = Number(searchParams.get("maxPrice")) || undefined;
+  const page = Number(searchParams.get("page")) || 1;
 
-  const { products, isLoading, error, refetch } = useProducts({
-    type: "all",
-    filters: { query, brandId, minPrice, maxPrice },
-  });
+  const { products, isLoading, currentPage, totalPages, error, refetch } =
+    useProducts({
+      type: "all",
+      filters: { query, brandId, minPrice, maxPrice, page },
+    });
 
   const results = products.length;
 
@@ -34,6 +36,18 @@ export default function ProductsClient() {
         error={error}
         onRetry={refetch}
       />
+
+      {totalPages > 1 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => {
+            const params = new URLSearchParams(searchParams.toString());
+            params.set("page", String(page));
+            router.push(`/products?${params.toString()}`);
+          }}
+        />
+      )}
     </section>
   );
 }

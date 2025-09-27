@@ -15,9 +15,6 @@ export async function getProducts(request: Request) {
 
   const skip = (page - 1) * limit;
 
-  const totalProducts = await prisma.products.count({ where: filters });
-  const totalPages = Math.ceil(totalProducts / limit);
-
   if (query) filters.name = { contains: query, mode: "insensitive" };
 
   if (brandId) filters.BrandId = brandId;
@@ -30,6 +27,9 @@ export async function getProducts(request: Request) {
   }
 
   try {
+    const totalProducts = await prisma.products.count({ where: filters });
+    const totalPages = Math.ceil(totalProducts / limit);
+
     const products = await prisma.products.findMany({
       where: filters,
       include: { Brands: true },

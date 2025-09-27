@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { FiFilter } from "react-icons/fi";
 import { useRouter, useSearchParams } from "next/navigation";
-
 import useBrands from "@/hooks/useBrands";
 import SidebarHeader from "./filters/SidebarHeader";
 import SearchFilter from "./filters/SearchFilter";
@@ -22,21 +21,19 @@ export default function FiltersSidebar({ mobile = false }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // valores iniciales de filtros desde la URL
   const queryParam = searchParams.get("query") ?? "";
   const brandParam = searchParams.get("brandId") ?? "";
   const minPriceParam = searchParams.get("minPrice") ?? "";
   const maxPriceParam = searchParams.get("maxPrice") ?? "";
 
-  // función genérica para actualizar un filtro en la URL
   const updateFilter = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
     if (value) params.set(key, value);
     else params.delete(key);
+    params.delete("page");
     router.push(`products/?${params.toString()}`);
   };
 
-  // clases según desktop/mobile
   const baseClasses = mobile
     ? `fixed top-0 left-0 h-screen z-50 bg-gray-50 shadow-lg transform transition-transform duration-300 ${
         open ? "translate-x-0" : "-translate-x-full"
@@ -47,7 +44,6 @@ export default function FiltersSidebar({ mobile = false }: Props) {
 
   return (
     <>
-      {/* Botón flotante mobile (cuando está cerrado) */}
       {mobile && !open && (
         <button
           onClick={() => setOpen(true)}
@@ -57,12 +53,9 @@ export default function FiltersSidebar({ mobile = false }: Props) {
         </button>
       )}
 
-      {/* Sidebar / Drawer */}
       <aside className={baseClasses}>
-        {/* Header con toggle */}
         <SidebarHeader open={open} setOpen={setOpen} />
 
-        {/* Contenido visible solo si está abierto */}
         {open && (
           <div className="flex-1 p-4 space-y-6 overflow-y-auto">
             <SearchFilter queryParam={queryParam} updateFilter={updateFilter} />
@@ -85,7 +78,6 @@ export default function FiltersSidebar({ mobile = false }: Props) {
         )}
       </aside>
 
-      {/* Fondo oscuro en mobile */}
       {mobile && open && (
         <div
           onClick={() => setOpen(false)}
