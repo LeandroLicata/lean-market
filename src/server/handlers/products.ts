@@ -19,7 +19,12 @@ export async function getProducts(request: Request) {
 
   const skip = (page - 1) * limit;
 
-  if (query) filters.name = { contains: query, mode: "insensitive" };
+  if (query) {
+    filters.OR = [
+      { name: { contains: query, mode: "insensitive" } },
+      { description: { contains: query, mode: "insensitive" } },
+    ];
+  }
 
   if (brandId) filters.BrandId = brandId;
 
