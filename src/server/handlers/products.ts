@@ -10,6 +10,10 @@ export async function getProducts(request: Request) {
   const maxPrice = searchParams.get("maxPrice");
   const page = Number(searchParams.get("page")) || 1;
   const limit = Number(searchParams.get("limit")) || 8;
+  const sortBy = searchParams.get("sortBy") || "createdAt";
+  const rawOrder = searchParams.get("order");
+  const order: "asc" | "desc" =
+    rawOrder === "asc" || rawOrder === "desc" ? rawOrder : "desc";
 
   const filters: Prisma.ProductsWhereInput = {};
 
@@ -35,6 +39,9 @@ export async function getProducts(request: Request) {
       include: { Brands: true },
       skip,
       take: limit,
+      orderBy: {
+        [sortBy]: order,
+      },
     });
 
     return NextResponse.json(
