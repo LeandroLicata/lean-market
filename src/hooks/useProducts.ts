@@ -14,7 +14,8 @@ interface ProductFilters {
   brandId?: string;
   minPrice?: number;
   maxPrice?: number;
-  sortBy?: "price_asc" | "price_desc" | "name_asc" | "name_desc";
+  sortBy?: "price" | "name";
+  order?: "asc" | "desc";
   page?: number;
 }
 

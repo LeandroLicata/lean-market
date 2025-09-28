@@ -14,10 +14,18 @@ export default function ProductsClient() {
   const maxPrice = Number(searchParams.get("maxPrice")) || undefined;
   const page = Number(searchParams.get("page")) || 1;
 
+  const rawSortBy = searchParams.get("sortBy");
+  const sortBy =
+    rawSortBy === "price" || rawSortBy === "name" ? rawSortBy : undefined;
+    
+  const rawOrder = searchParams.get("order");
+  const order =
+    rawOrder === "asc" || rawOrder === "desc" ? rawOrder : undefined;
+
   const { products, isLoading, currentPage, totalPages, error, refetch } =
     useProducts({
       type: "all",
-      filters: { query, brandId, minPrice, maxPrice, page },
+      filters: { query, brandId, minPrice, maxPrice, page, sortBy, order },
     });
 
   const results = products.length;

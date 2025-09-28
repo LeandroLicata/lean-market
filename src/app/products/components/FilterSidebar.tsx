@@ -8,10 +8,13 @@ import SidebarHeader from "./filters/SidebarHeader";
 import SearchFilter from "./filters/SearchFilter";
 import BrandFilter from "./filters/BrandFilter";
 import PriceFilter from "./filters/PriceFilter";
+import SortFilter from "./filters/SortFilter";
 
 interface Props {
   mobile?: boolean;
 }
+
+type UpdateParam = (string & {}) | Record<string, string | undefined>;
 
 export default function FiltersSidebar({ mobile = false }: Props) {
   // estado apertura (si es mobile arranca cerrado)
@@ -25,11 +28,22 @@ export default function FiltersSidebar({ mobile = false }: Props) {
   const brandParam = searchParams.get("brandId") ?? "";
   const minPriceParam = searchParams.get("minPrice") ?? "";
   const maxPriceParam = searchParams.get("maxPrice") ?? "";
+  const sortBy = searchParams.get("sortBy") ?? "";
+  const order = searchParams.get("order") ?? "";
 
-  const updateFilter = (key: string, value: string) => {
+  const updateFilter = (key: UpdateParam, value?: string | undefined) => {
     const params = new URLSearchParams(searchParams.toString());
-    if (value) params.set(key, value);
-    else params.delete(key);
+
+    if (typeof key === "string") {
+      if (value) params.set(key, value);
+      else params.delete(key);
+    } else {
+      Object.entries(key).forEach(([k, v]) => {
+        if (v) params.set(k, v);
+        else params.delete(k);
+      });
+    }
+
     params.delete("page");
     router.push(`products/?${params.toString()}`);
   };
@@ -66,6 +80,12 @@ export default function FiltersSidebar({ mobile = false }: Props) {
               brands={brands}
               isLoading={isLoading}
               error={error}
+            />
+
+            <SortFilter
+              sortBy={sortBy}
+              order={order}
+              updateFilter={updateFilter}
             />
 
             <PriceFilter

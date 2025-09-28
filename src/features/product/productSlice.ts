@@ -37,7 +37,8 @@ export interface FetchProductsArgs {
   brandId?: string;
   minPrice?: number;
   maxPrice?: number;
-  sortBy?: "price_asc" | "price_desc" | "name_asc" | "name_desc";
+  sortBy?: "price" | "name";
+  order?: "asc" | "desc";
   page?: number;
 }
 
@@ -46,7 +47,7 @@ export const fetchProducts = createAsyncThunk<
   FetchProductsArgs
 >(
   "products/fetchProducts",
-  async ({ query, brandId, minPrice, maxPrice, sortBy, page }) => {
+  async ({ query, brandId, minPrice, maxPrice, sortBy, order, page }) => {
     const params = new URLSearchParams();
 
     if (query) params.append("query", query);
@@ -54,6 +55,7 @@ export const fetchProducts = createAsyncThunk<
     if (minPrice !== undefined) params.append("minPrice", String(minPrice));
     if (maxPrice !== undefined) params.append("maxPrice", String(maxPrice));
     if (sortBy) params.append("sortBy", sortBy);
+    if (order) params.append("order", order);
     if (page) params.append("page", String(page));
 
     const response = await axios.get(`/api/products?${params.toString()}`);
