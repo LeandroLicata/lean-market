@@ -44,3 +44,38 @@ export async function getBrands() {
     return new NextResponse("Error fetching brands", { status: 500 });
   }
 }
+
+export async function updateBrand(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+
+    const body = await req.json();
+    const { name, logo_url } = body;
+
+    if (name && typeof name !== "string") {
+      return NextResponse.json(
+        { error: "El nombre debe ser un string válido." },
+        { status: 400 }
+      );
+    }
+
+    const updatedBrand = await prisma.brands.update({
+      where: { id },
+      data: {
+        name: name ?? undefined,
+        logo_url: logo_url ?? undefined,
+      },
+    });
+
+    return NextResponse.json(updatedBrand, { status: 200 });
+  } catch (error) {
+    console.error("Error al actualizar la marca:", error);
+    return NextResponse.json(
+      { error: "Error al actualizar la marca." },
+      { status: 500 }
+    );
+  }
+}
