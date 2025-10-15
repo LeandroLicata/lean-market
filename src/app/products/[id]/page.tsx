@@ -1,7 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { useParams } from "next/navigation";
 import useProducts from "@/hooks/useProducts";
+import useCart from "@/hooks/useCart";
+import Swal from "sweetalert2";
 
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -10,6 +13,53 @@ export default function ProductDetailPage() {
     type: "detail",
     id,
   });
+
+  const { addToCart, isLoading: cartLoading } = useCart();
+  const [quantity, setQuantity] = useState(1); // cantidad seleccionada
+
+  const handleAddToCart = async () => {
+    if (!productDetail) return;
+
+    if (productDetail.stock <= 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "Sin stock disponible",
+        text: "Lo sentimos, este producto no tiene stock por el momento.",
+        confirmButtonColor: "#3085d6",
+      });
+      return;
+    }
+
+    if (quantity > productDetail.stock) {
+      Swal.fire({
+        icon: "warning",
+        title: "Cantidad inválida",
+        text: `Solo hay ${productDetail.stock} unidades disponibles.`,
+        confirmButtonColor: "#3085d6",
+      });
+      return;
+    }
+
+    try {
+      await addToCart(productDetail.id, quantity);
+
+      Swal.fire({
+        icon: "success",
+        title: `Agregaste ${quantity} unidad${
+          quantity > 1 ? "es" : ""
+        } al carrito 🛒`,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    } catch (err) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudo agregar el producto al carrito.",
+        confirmButtonColor: "#d33",
+      });
+    }
+  };
 
   if (isLoading) {
     return (
@@ -40,6 +90,8 @@ export default function ProductDetailPage() {
       </div>
     );
   }
+
+  const { stock } = productDetail;
 
   return (
     <section className="max-w-5xl mx-auto px-4 sm:px-8 py-12">
@@ -74,13 +126,45 @@ export default function ProductDetailPage() {
             {productDetail.description}
           </p>
 
-          <p className="text-3xl font-bold text-green-600 mb-8">
+          <p className="text-3xl font-bold text-green-600 mb-4">
             ${productDetail.price}
             <span className="text-sm text-gray-500 ml-1">USD</span>
           </p>
 
-          <button className="px-8 py-3 flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white rounded-xl shadow-md transition transform hover:scale-105">
-            🛒 Agregar al carrito
+          <p
+            className={`text-sm mb-4 ${
+              stock > 0 ? "text-gray-600" : "text-red-500 font-medium"
+            }`}
+          >
+            {stock > 0 ? `Stock disponible: ${stock}` : "Sin stock"}
+          </p>
+
+          {/* Selección de cantidad */}
+          {stock > 0 && (
+            <div className="mb-4 flex items-center gap-3">
+              <label className="font-medium text-gray-700">Cantidad:</label>
+              <input
+                type="number"
+                min={1}
+                max={stock}
+                value={quantity}
+                onChange={(e) => setQuantity(Number(e.target.value))}
+                className="w-20 px-3 py-2 border rounded-md text-center"
+              />
+            </div>
+          )}
+
+          {/* Botón agregar al carrito */}
+          <button
+            onClick={handleAddToCart}
+            disabled={stock <= 0 || cartLoading}
+            className={`px-8 py-3 flex items-center justify-center gap-2 rounded-xl shadow-md transition transform hover:scale-105 ${
+              stock > 0
+                ? "bg-green-500 hover:bg-green-600 text-white"
+                : "bg-gray-400 text-gray-200 cursor-not-allowed"
+            }`}
+          >
+            {cartLoading ? "Agregando..." : "🛒 Agregar al carrito"}
           </button>
         </div>
       </div>

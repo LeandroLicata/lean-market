@@ -69,8 +69,15 @@ export async function getProducts(request: Request) {
 export async function createProduct(request: Request) {
   try {
     const body = await request.json();
-    const { name, description, price, brandId, imageUrl, specifications } =
-      body;
+    const {
+      name,
+      description,
+      price,
+      brandId,
+      imageUrl,
+      specifications,
+      stock,
+    } = body;
 
     if (!name || !price || !brandId) {
       return NextResponse.json(
@@ -98,6 +105,7 @@ export async function createProduct(request: Request) {
         image_url: imageUrl ?? null,
         BrandId: brandId,
         specifications: specifications ?? null,
+        stock: stock ?? 1, // si no envían stock, se usa 1
       },
     });
 
@@ -171,6 +179,77 @@ export async function getProductById(
     return NextResponse.json(
       {
         message: "Error fetching product by id",
+        error: error instanceof Error ? error.message : JSON.stringify(error),
+      },
+      { status: 500 }
+    );
+  }
+}
+
+export async function updateProduct(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const { id } = params;
+    const body = await request.json();
+    const {
+      name,
+      description,
+      price,
+      brandId,
+      imageUrl,
+      specifications,
+      stock,
+    } = body;
+
+    // Verificar si el producto existe
+    const existingProduct = await prisma.products.findUnique({
+      where: { id },
+    });
+
+    if (!existingProduct) {
+      return NextResponse.json(
+        { message: "El producto no existe" },
+        { status: 404 }
+      );
+    }
+
+    // Si se envía brandId, validar que la marca exista
+    if (brandId) {
+      const existingBrand = await prisma.brands.findUnique({
+        where: { id: brandId },
+      });
+
+      if (!existingBrand) {
+        return NextResponse.json(
+          { message: "La marca especificada no existe" },
+          { status: 404 }
+        );
+      }
+    }
+
+    // Actualizar el producto
+    const updatedProduct = await prisma.products.update({
+      where: { id },
+      data: {
+        name: name ?? existingProduct.name,
+        description: description ?? existingProduct.description,
+        price: price ?? existingProduct.price,
+        image_url: imageUrl ?? existingProduct.image_url,
+        BrandId: brandId ?? existingProduct.BrandId,
+        specifications: specifications ?? existingProduct.specifications,
+        stock: typeof stock === "number" ? stock : existingProduct.stock,
+      },
+    });
+
+    return NextResponse.json(updatedProduct, { status: 200 });
+  } catch (error) {
+    console.error("Error updating product:", String(error));
+
+    return NextResponse.json(
+      {
+        message: "Error al actualizar el producto",
         error: error instanceof Error ? error.message : JSON.stringify(error),
       },
       { status: 500 }
