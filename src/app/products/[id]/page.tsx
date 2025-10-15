@@ -51,7 +51,7 @@ export default function ProductDetailPage() {
         showConfirmButton: false,
         timer: 1500,
       });
-    } catch (err) {
+    } catch {
       Swal.fire({
         icon: "error",
         title: "Error",
