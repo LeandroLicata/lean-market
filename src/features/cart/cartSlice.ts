@@ -22,8 +22,11 @@ export const fetchCart = createAsyncThunk<Cart>("cart/fetchCart", async () => {
 export const addToCart = createAsyncThunk<
   Cart,
   { productId: string; quantity?: number }
->("cart/addToCart", async () => {
-  const response = await axios.post("/api/cart");
+>("cart/addToCart", async ({ productId, quantity = 1 }) => {
+  const response = await axios.post("/api/cart", {
+    productId,
+    quantity,
+  });
   return response.data;
 });
 
