@@ -7,6 +7,10 @@ module.exports = {
         hostname: "randomuser.me",
         pathname: "/api/portraits/**",
       },
+      {
+        protocol: "https",
+        hostname: "**",
+      },
     ],
   },
 };
