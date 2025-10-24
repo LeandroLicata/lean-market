@@ -17,25 +17,27 @@ model Brands {
 }
 
 model Products {
-  id          String   @id @default(uuid()) @db.Uuid
-  name        String   @unique @db.VarChar(255)
-  description String?
-  image_url   String?  @db.VarChar(255)
-  price       Decimal? @db.Decimal
-  stock       Int      @default(0)
-  cartItems   CartItems[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  BrandId     String?  @db.Uuid
-  Brands      Brands?  @relation("BrandProducts", fields: [BrandId], references: [id])
+  id             String       @id @default(uuid()) @db.Uuid
+  name           String       @unique @db.VarChar(255)
+  description    String?
+  image_url      String?      @db.VarChar(255)
+  price          Decimal?     @db.Decimal
+  stock          Int          @default(0)
+  cartItems      CartItems[]
+  OrderItems     OrderItems[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  BrandId        String?      @db.Uuid
+  Brands         Brands?      @relation("BrandProducts", fields: [BrandId], references: [id])
   specifications Json?
 }
-
+   
 model Users {
   id             String   @id @default(uuid()) @db.Uuid
   email          String   @unique @db.VarChar(255)
   hashedPassword String   @db.VarChar(255)
   cart           Carts?
+  orders         Orders[]
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
@@ -58,4 +60,35 @@ model CartItems {
   quantity  Int       @default(1)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+}
+
+enum OrderStatus {
+  pending
+  paid
+  shipped
+  delivered
+  cancelled
+}
+
+model Orders {
+  id        String       @id @default(uuid()) @db.Uuid
+  user      Users        @relation(fields: [userId], references: [id])
+  userId    String       @db.Uuid @unique
+  items     OrderItems[]
+  total     Decimal      @db.Decimal
+  status    OrderStatus  @default(pending)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model OrderItems {
+  id        String   @id @default(uuid()) @db.Uuid
+  order     Orders   @relation(fields: [orderId], references: [id])
+  orderId   String   @db.Uuid @unique
+  product   Products @relation(fields: [productId], references: [id])
+  productId String   @db.Uuid @unique
+  quantity  Int      @default(1)
+  price     Decimal  @db.Decimal
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
