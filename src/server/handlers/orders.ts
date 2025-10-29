@@ -80,3 +80,36 @@ export async function confirmOrder() {
     );
   }
 }
+
+export async function getOrders() {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const user = await prisma.users.findUnique({
+      where: { email: session.user.email },
+      include: {
+        orders: {
+          include: {
+            items: { include: { product: true } },
+          },
+        },
+      },
+    });
+
+    if (!user || !user.orders) {
+      return NextResponse.json({ items: [] });
+    }
+
+    return NextResponse.json(user.orders);
+  } catch (error) {
+    console.error("Error fetching orders: ", error);
+    return NextResponse.json(
+      { error: "Something went wrong" },
+      { status: 500 }
+    );
+  }
+}
