@@ -8,11 +8,11 @@ import { AppDispatch, RootState } from "@/store/store";
 const useBrands = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { brands, status } = useSelector((state: RootState) => state.brand);
+  const { brands, status, error } = useSelector(
+    (state: RootState) => state.brand
+  );
 
   const isLoading = status === "loading";
-  const error =
-    status === "failed" ? "Ocurrió un error al cargar las marcas." : null;
 
   const refetch = useCallback(() => {
     dispatch(fetchBrands());
