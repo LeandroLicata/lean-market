@@ -1,15 +1,19 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { Brand } from "@/types/brand";
+import { Status } from "@/types/status";
+import { ErrorState } from "@/types/error";
 
 interface BrandState {
   brands: Brand[];
-  status: "idle" | "loading" | "succeeded" | "failed";
+  status: Status;
+  error: ErrorState;
 }
 
 const initialState: BrandState = {
   brands: [],
   status: "idle",
+  error: null,
 };
 
 export const fetchBrands = createAsyncThunk<Brand[]>(
@@ -27,13 +31,16 @@ const brandSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchBrands.pending, (state) => {
       state.status = "loading";
+      state.error = null;
     });
     builder.addCase(fetchBrands.fulfilled, (state, action) => {
       state.status = "succeeded";
       state.brands = action.payload;
+      state.error = null;
     });
-    builder.addCase(fetchBrands.rejected, (state) => {
+    builder.addCase(fetchBrands.rejected, (state, action) => {
       state.status = "failed";
+      state.error = action.error.message || "Error al obtener las marcas";
     });
   },
 });
