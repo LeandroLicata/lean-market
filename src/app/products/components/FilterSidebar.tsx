@@ -14,7 +14,7 @@ interface Props {
   mobile?: boolean;
 }
 
-type UpdateParam = (string & {}) | Record<string, string | undefined>;
+type UpdateParam = string | Record<string, string | undefined>;
 
 export default function FiltersSidebar({ mobile = false }: Props) {
   // estado apertura (si es mobile arranca cerrado)
