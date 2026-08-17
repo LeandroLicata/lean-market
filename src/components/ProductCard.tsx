@@ -2,6 +2,7 @@
 
 import { Product } from "@/types/product";
 import Link from "next/link";
+import ProductImage from "./ProductImage";
 
 const ProductCard: React.FC<Product> = ({
   id,
@@ -18,7 +19,7 @@ const ProductCard: React.FC<Product> = ({
                    cursor-pointer transition-transform duration-200 
                    hover:shadow-lg hover:scale-105 h-full flex flex-col"
       >
-        <img
+        <ProductImage
           src={image_url}
           alt={name}
           className="w-full h-40 object-cover rounded-md"
@@ -32,10 +33,12 @@ const ProductCard: React.FC<Product> = ({
           <div className="flex items-center gap-2 mt-2">
             {/* Contenedor SOLO para el logo */}
             <div className="w-12 h-6 flex items-center justify-center">
-              <img
+              <ProductImage
                 src={Brands.logo_url}
                 alt={Brands.name}
                 className="max-h-full max-w-full object-contain"
+                // Si el logo no carga alcanza con el nombre de la marca al lado.
+                fallback={null}
               />
             </div>
             {/* Nombre de la marca */}

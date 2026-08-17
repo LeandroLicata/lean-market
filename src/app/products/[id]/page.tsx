@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import useProducts from "@/hooks/useProducts";
 import useCart from "@/hooks/useCart";
+import ProductImage from "@/components/ProductImage";
 import Swal from "sweetalert2";
 
 export default function ProductDetailPage() {
@@ -102,20 +103,21 @@ export default function ProductDetailPage() {
     <section className="max-w-5xl mx-auto px-4 sm:px-8 py-12">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
         <div className="flex justify-center">
-          <img
+          <ProductImage
             src={productDetail.image_url}
             alt={productDetail.name}
-            className="w-full max-w-md rounded-2xl shadow-lg border border-gray-200"
+            className="w-full max-w-md aspect-square object-cover rounded-2xl shadow-lg border border-gray-200"
           />
         </div>
 
         <div>
           {productDetail.Brands && (
             <div className="flex items-center gap-4 mb-5">
-              <img
+              <ProductImage
                 src={productDetail.Brands.logo_url}
                 alt={productDetail.Brands.name}
                 className="w-14 h-14 object-contain"
+                fallback={null}
               />
               <span className="text-xl font-semibold text-gray-800">
                 {productDetail.Brands.name}
