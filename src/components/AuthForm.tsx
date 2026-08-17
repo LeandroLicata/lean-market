@@ -2,9 +2,10 @@
 
 import { useForm } from "react-hook-form";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Swal from "sweetalert2";
 import axios from "axios";
+import { MIN_PASSWORD_LENGTH } from "@/lib/validation";
 
 type FormData = {
   email: string;
@@ -14,15 +15,23 @@ type FormData = {
 
 const AuthForm = ({ isRegister }: { isRegister?: boolean }) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Si llegamos acá desde una página protegida, volvemos a ella al autenticarnos.
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     watch,
   } = useForm<FormData>();
 
   const password = watch("password");
+
+  const showError = (text: string) => {
+    Swal.fire({ title: "Error", text, icon: "error" });
+  };
 
   const onSubmit = async (data: FormData) => {
     if (isRegister) {
@@ -36,38 +45,21 @@ const AuthForm = ({ isRegister }: { isRegister?: boolean }) => {
       });
 
       try {
-        await axios.post("/api/auth-custom/register", data);
-
-        Swal.close();
-
-        // Inicia sesión automáticamente después del registro
-        await signIn("credentials", {
+        await axios.post("/api/register", {
           email: data.email,
           password: data.password,
-          redirect: false,
         });
-
-        router.push("/");
       } catch (error) {
-        Swal.fire({
-          title: "Error",
-          text:
-            axios.isAxiosError(error) && error.response?.data?.message
-              ? error.response.data.message
-              : "Ocurrió un error al registrarse",
-          icon: "error",
-        });
+        Swal.close();
+        showError(
+          axios.isAxiosError(error) && error.response?.data?.message
+            ? error.response.data.message
+            : "Ocurrió un error al registrarse"
+        );
+        return;
       }
-    } else {
-      // Login
-      Swal.fire({
-        title: "Iniciando sesión...",
-        allowOutsideClick: false,
-        didOpen: () => {
-          Swal.showLoading();
-        },
-      });
 
+      // Inicia sesión automáticamente después del registro
       const res = await signIn("credentials", {
         email: data.email,
         password: data.password,
@@ -77,15 +69,40 @@ const AuthForm = ({ isRegister }: { isRegister?: boolean }) => {
       Swal.close();
 
       if (res?.error) {
-        Swal.fire({
-          title: "Error",
-          text: "Credenciales inválidas",
-          icon: "error",
-        });
-      } else {
-        router.push("/");
+        showError(
+          "Tu cuenta se creó, pero no pudimos iniciar sesión. Probá ingresar manualmente."
+        );
+        router.push("/login");
+        return;
       }
+
+      router.push(callbackUrl);
+      return;
     }
+
+    // Login
+    Swal.fire({
+      title: "Iniciando sesión...",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
+    const res = await signIn("credentials", {
+      email: data.email,
+      password: data.password,
+      redirect: false,
+    });
+
+    Swal.close();
+
+    if (res?.error) {
+      showError("Credenciales inválidas");
+      return;
+    }
+
+    router.push(callbackUrl);
   };
 
   return (
@@ -94,6 +111,7 @@ const AuthForm = ({ isRegister }: { isRegister?: boolean }) => {
         <label className="block font-bold mb-1">Email</label>
         <input
           type="email"
+          autoComplete="email"
           {...register("email", { required: "El email es obligatorio" })}
           className="w-full border px-3 py-2 rounded"
         />
@@ -104,8 +122,16 @@ const AuthForm = ({ isRegister }: { isRegister?: boolean }) => {
         <label className="block font-bold mb-1">Contraseña</label>
         <input
           type="password"
+          autoComplete={isRegister ? "new-password" : "current-password"}
           {...register("password", {
             required: "La contraseña es obligatoria",
+            // Solo en el registro: en el login no adelantamos reglas de la contraseña.
+            ...(isRegister && {
+              minLength: {
+                value: MIN_PASSWORD_LENGTH,
+                message: `La contraseña debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres`,
+              },
+            }),
           })}
           className="w-full border px-3 py-2 rounded"
         />
@@ -119,6 +145,7 @@ const AuthForm = ({ isRegister }: { isRegister?: boolean }) => {
           <label className="block font-bold mb-1">Repetir contraseña</label>
           <input
             type="password"
+            autoComplete="new-password"
             {...register("confirmPassword", {
               validate: (value) =>
                 value === password || "Las contraseñas no coinciden",
@@ -132,7 +159,8 @@ const AuthForm = ({ isRegister }: { isRegister?: boolean }) => {
       )}
       <button
         type="submit"
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        disabled={isSubmitting}
+        className="bg-blue-500 hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
       >
         {isRegister ? "Registrarse" : "Iniciar sesión"}
       </button>

@@ -1,12 +1,9 @@
-"use client";
-
+import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Provider as ReduxProvider } from "react-redux";
-import { store } from "@/store/store";
-import { SessionProvider } from "next-auth/react";
+import Providers from "@/components/Providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,23 +15,27 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const metadata: Metadata = {
+  title: "LeanMarket",
+  description:
+    "Tienda de productos electrónicos y accesorios tecnológicos: consolas, auriculares, televisores y teléfonos.",
+};
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="es">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SessionProvider refetchInterval={60}>
-          <ReduxProvider store={store}>
-            <Navbar />
-            <main>{children}</main>
-            <Footer />
-          </ReduxProvider>
-        </SessionProvider>
+        <Providers>
+          <Navbar />
+          <main>{children}</main>
+          <Footer />
+        </Providers>
       </body>
     </html>
   );

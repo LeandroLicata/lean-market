@@ -13,7 +13,8 @@ export default function Navbar() {
   const { search, setSearch, isMenuOpen, toggleMenu, closeMenu, handleSearch } =
     useNavbar();
 
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const isLoadingSession = status === "loading";
 
   const links = [
     { href: "/products", label: "Productos" },
@@ -68,13 +69,33 @@ export default function Navbar() {
             </Link>
           ))}
 
-          {session ? (
-            <button
-              onClick={() => signOut({ callbackUrl: "/" })}
-              className="px-4 py-1.5 border border-mint-bright text-mint-bright rounded-md hover:bg-mint-bright hover:text-white transition text-sm"
-            >
-              Cerrar sesión
-            </button>
+          {isLoadingSession ? (
+            // Placeholder para que los botones de sesión no parpadeen al cargar.
+            <div
+              className="h-8 w-56 rounded-md bg-white/10 animate-pulse"
+              aria-hidden
+            />
+          ) : session ? (
+            <>
+              <Link
+                href="/orders"
+                className="text-primary hover:text-sky-bright transition"
+              >
+                Mis pedidos
+              </Link>
+              <span
+                className="text-sm font-normal text-primary/70 max-w-[12rem] truncate"
+                title={session.user.email ?? undefined}
+              >
+                {session.user.email}
+              </span>
+              <button
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="px-4 py-1.5 border border-mint-bright text-mint-bright rounded-md hover:bg-mint-bright hover:text-white transition text-sm"
+              >
+                Cerrar sesión
+              </button>
+            </>
           ) : (
             <>
               <Link href="/login">
@@ -115,13 +136,27 @@ export default function Navbar() {
             </Link>
           ))}
 
-          {session ? (
-            <button
-              onClick={() => signOut({ callbackUrl: "/" })}
-              className="w-full px-4 py-2 border border-mint-bright text-mint-bright rounded-md hover:bg-mint-bright hover:text-white transition text-sm"
-            >
-              Cerrar sesión
-            </button>
+          {isLoadingSession ? (
+            <div
+              className="h-10 w-full rounded-md bg-white/10 animate-pulse"
+              aria-hidden
+            />
+          ) : session ? (
+            <>
+              <Link
+                href="/orders"
+                className="block px-4 py-2 text-center hover:bg-gray-200"
+                onClick={closeMenu}
+              >
+                Mis pedidos
+              </Link>
+              <button
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="w-full px-4 py-2 border border-mint-bright text-mint-bright rounded-md hover:bg-mint-bright hover:text-white transition text-sm"
+              >
+                Cerrar sesión
+              </button>
+            </>
           ) : (
             <>
               <Link href="/login">

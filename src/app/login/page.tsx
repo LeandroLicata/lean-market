@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import AuthForm from "@/components/AuthForm";
 
 export default function Page() {
@@ -5,7 +6,9 @@ export default function Page() {
     <div className="flex justify-center items-center py-4">
       <div className="max-w-md w-full p-8 bg-white shadow-lg rounded-lg">
         <h1 className="text-2xl font-bold mb-4">Iniciar sesión</h1>
-        <AuthForm />
+        <Suspense fallback={null}>
+          <AuthForm />
+        </Suspense>
       </div>
     </div>
   );

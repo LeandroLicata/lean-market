@@ -1,32 +1,25 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import { getSessionUserId } from "@/lib/auth";
 
 export async function getCart() {
   try {
-    const session = await getServerSession(authOptions);
+    const userId = await getSessionUserId();
 
-    if (!session?.user?.email) {
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const user = await prisma.users.findUnique({
-      where: { email: session.user.email },
-      include: {
-        cart: {
-          include: {
-            items: { include: { product: true } },
-          },
-        },
-      },
+    const cart = await prisma.carts.findUnique({
+      where: { userId },
+      include: { items: { include: { product: true } } },
     });
 
-    if (!user || !user.cart) {
+    if (!cart) {
       return NextResponse.json({ items: [] });
     }
 
-    return NextResponse.json(user.cart);
+    return NextResponse.json(cart);
   } catch (error) {
     console.error("Error fetching cart:", error);
     return NextResponse.json(
@@ -38,9 +31,9 @@ export async function getCart() {
 
 export async function addToCart(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
+    const userId = await getSessionUserId();
 
-    if (!session?.user?.email) {
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -53,24 +46,12 @@ export async function addToCart(req: Request) {
       );
     }
 
-    const user = await prisma.users.findUnique({
-      where: { email: session.user.email },
-      include: { cart: { include: { items: { include: { product: true } } } } },
+    const cart = await prisma.carts.upsert({
+      where: { userId },
+      create: { userId },
+      update: {},
     });
-
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-    let cartId = user.cart?.id;
-    if (!cartId) {
-      const newCart = await prisma.carts.create({
-        data: { userId: user.id },
-        include: { items: { include: { product: true } } },
-      });
-      cartId = newCart.id;
-      user.cart = newCart;
-    }
+    const cartId = cart.id;
 
     const existingItem = await prisma.cartItems.findFirst({
       where: { cartId, productId },

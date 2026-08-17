@@ -1,11 +1,11 @@
-
+import type { NextAuthOptions } from "next-auth";
+import { getServerSession } from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { prisma } from "./prisma";
 import bcrypt from "bcryptjs";
-// import type { Session } from "next-auth";
-// import type { JWT } from "next-auth/jwt";
+import { prisma } from "./prisma";
+import { normalizeEmail } from "./validation";
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -19,7 +19,7 @@ export const authOptions = {
         }
 
         const user = await prisma.users.findUnique({
-          where: { email: credentials.email },
+          where: { email: normalizeEmail(credentials.email) },
         });
 
         if (!user) {
@@ -35,6 +35,7 @@ export const authOptions = {
           return null;
         }
 
+        // Se devuelve solo lo que va al token: nunca el hash.
         return {
           id: user.id,
           email: user.email,
@@ -42,20 +43,31 @@ export const authOptions = {
       },
     }),
   ],
-  // session: {
-  //   strategy: "jwt",
-  // },
-  // callbacks: {
-  //   async jwt({ token, user }: { token: JWT; user: any }) {
-  //     if (user) token.id = user.id;
-  //     return token;
-  //   },
-  //   async session({ session, token }: { session: Session; token: JWT }) {
-  //     if (session.user && token.id) {
-  //       (session.user as any).id = token.id;
-  //     }
-  //     return session;
-  //   },
-  // },
+  session: { strategy: "jwt" },
+  pages: { signIn: "/login" },
+  callbacks: {
+    async jwt({ token, user }) {
+      // `user` solo viene en el login inicial.
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id;
+      }
+      return session;
+    },
+  },
   secret: process.env.NEXTAUTH_SECRET,
 };
+
+/**
+ * Id del usuario autenticado, o `null` si no hay sesión.
+ * Los handlers lo usan en lugar de buscar el usuario por email en cada request.
+ */
+export async function getSessionUserId() {
+  const session = await getServerSession(authOptions);
+  return session?.user?.id ?? null;
+}

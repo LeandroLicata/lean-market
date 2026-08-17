@@ -1,30 +1,13 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+import { getSessionUserId } from "@/lib/auth";
 
 export async function confirmOrder() {
-  const session = await getServerSession(authOptions);
+  const userId = await getSessionUserId();
 
-  if (!session?.user?.email) {
+  if (!userId) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
-
-  const email = session.user.email;
-
-  // Buscar el usuario por email
-  const user = await prisma.users.findUnique({
-    where: { email },
-  });
-
-  if (!user) {
-    return NextResponse.json(
-      { error: "Usuario no encontrado" },
-      { status: 404 }
-    );
-  }
-
-  const userId = user.id; // lo obtenés desde la DB
 
   try {
     const cart = await prisma.carts.findUnique({
@@ -83,28 +66,19 @@ export async function confirmOrder() {
 
 export async function getOrders() {
   try {
-    const session = await getServerSession(authOptions);
+    const userId = await getSessionUserId();
 
-    if (!session?.user?.email) {
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const user = await prisma.users.findUnique({
-      where: { email: session.user.email },
-      include: {
-        orders: {
-          include: {
-            items: { include: { product: true } },
-          },
-        },
-      },
+    const orders = await prisma.orders.findMany({
+      where: { userId },
+      include: { items: { include: { product: true } } },
+      orderBy: { createdAt: "desc" },
     });
 
-    if (!user || !user.orders) {
-      return NextResponse.json({ items: [] });
-    }
-
-    return NextResponse.json(user.orders);
+    return NextResponse.json(orders);
   } catch (error) {
     console.error("Error fetching orders: ", error);
     return NextResponse.json(
