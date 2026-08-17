@@ -60,6 +60,8 @@ model CartItems {
   quantity  Int       @default(1)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+
+  @@unique([cartId, productId])
 }
 
 enum OrderStatus {
@@ -73,22 +75,26 @@ enum OrderStatus {
 model Orders {
   id        String       @id @default(uuid()) @db.Uuid
   user      Users        @relation(fields: [userId], references: [id])
-  userId    String       @db.Uuid @unique
+  userId    String       @db.Uuid
   items     OrderItems[]
   total     Decimal      @db.Decimal
   status    OrderStatus  @default(pending)
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
+
+  @@index([userId])
 }
 
 model OrderItems {
   id              String   @id @default(uuid()) @db.Uuid
   order           Orders   @relation(fields: [orderId], references: [id])
-  orderId         String   @db.Uuid @unique
+  orderId         String   @db.Uuid
   product         Products @relation(fields: [productId], references: [id])
-  productId       String   @db.Uuid @unique
+  productId       String   @db.Uuid
   quantity        Int      @default(1)
   priceAtPurchase Decimal  @db.Decimal
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+
+  @@index([orderId])
 }
