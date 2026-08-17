@@ -40,6 +40,64 @@ reinicie su TS server (`Ctrl+Shift+P` → "TypeScript: Restart TS Server"). Si a
 error sobre una propiedad de Prisma que sí existe en el schema, verificar con
 `npx tsc --noEmit` antes de tocar el código: si tsc pasa, es caché del IDE.
 
+## Cómo está armado
+
+```
+src/app/            páginas y API routes (App Router)
+  api/<recurso>/    routes de una línea que re-exportan un handler
+src/server/handlers/ toda la lógica de servidor
+src/features/       slices de Redux Toolkit, uno por dominio
+src/hooks/          lo que consumen los componentes
+src/components/     componentes compartidos
+src/lib/            auth, prisma, validación, helpers
+src/types/          tipos compartidos, uno por entidad
+```
+
+`src/app/layout.tsx` es server component; los providers (`SessionProvider`,
+`ReduxProvider`) viven en `src/components/Providers.tsx` para no volver cliente a toda la
+app. Si se agrega un provider, va ahí.
+
+## El carrito tiene dos modos
+
+Es la parte con más sutilezas del proyecto.
+
+- **Invitado**: vive en `localStorage` (`leanmarket:guest-cart`), lo manejan reducers
+  puros del `cartSlice` (`guestItem*`).
+- **Autenticado**: vive en la DB, lo manejan los thunks contra `/api/cart`.
+
+`useCart` elige el modo y expone la misma interfaz para los dos, así que los componentes
+no se enteran de la diferencia.
+
+Tres reglas que hay que respetar al tocarlo:
+
+1. **`CartSync` es el dueño único de la carga.** Está montado una sola vez en los
+   providers. Ningún hook ni componente debe disparar la carga inicial del carrito: si se
+   hace desde `useCart`, vuelve el bug de pedir el carrito una vez por componente y el
+   merge puede dispararse dos veces en paralelo.
+2. **La persistencia del carrito de invitado pasa solo por la suscripción en
+   `store.ts`**, y está guardada por el flag `hydrated`. Sin ese flag, el estado inicial
+   vacío se guarda antes de leer el localStorage y borra el carrito en cada navegación.
+   No escribir en localStorage desde reducers ni componentes.
+3. Al iniciar sesión, `CartSync` detecta la transición y llama a `/api/cart/merge`, que
+   suma cantidades y las topea al stock. El localStorage se limpia **solo si el merge
+   salió bien**, para poder reintentar.
+
+El carrito de invitado se revalida contra `/api/cart/validate` al cargarlo, porque la
+copia del producto guardada en localStorage puede tener precio o stock viejos. Los dos
+endpoints devuelven `adjustments`: mensajes ya en español, listos para mostrar.
+
+## La compra
+
+`confirmOrder` (`src/server/handlers/orders.ts`) corre entera en una transacción:
+descuenta stock, crea la orden con sus ítems y vacía el carrito, o no hace nada.
+
+El descuento usa `updateMany` con `where: { stock: { gte: cantidad } }`: la validación y
+el descuento son una sola sentencia atómica. Si `count === 0`, el producto se quedó sin
+stock y se lanza para abortar la transacción. **No reemplazar eso por leer el stock y
+después restarlo**: ahí vuelve la ventana de carrera que dejaba stock negativo.
+
+Todavía no hay pasarela de pago: la orden queda en `pending`.
+
 ## Convenciones del código
 
 - **API routes son de una línea.** La lógica vive en `src/server/handlers/<recurso>.ts` y
@@ -63,5 +121,14 @@ error sobre una propiedad de Prisma que sí existe en el schema, verificar con
 - Autenticación por credenciales (email + password con bcrypt), sesión JWT. El email se
   normaliza a lowercase tanto al registrar como al autenticar: si se cambia en un lado,
   hay que cambiarlo en el otro o los logins fallan.
-- `.env` no se commitea (`.gitignore` ignora `.env*`). Necesita `DATABASE_URL`,
-  `NEXTAUTH_SECRET` y, en producción, `NEXTAUTH_URL`.
+- `.env` no se commitea (`.gitignore` ignora `.env*`, con excepción para `.env.example`).
+  Necesita `DATABASE_URL`, `NEXTAUTH_SECRET` y, en producción, `NEXTAUTH_URL`.
+- `session.user.id` existe porque los callbacks `jwt`/`session` de `src/lib/auth.ts` lo
+  ponen. Los handlers lo leen con `getSessionUserId()`; no hace falta buscar el usuario
+  por email.
+- Las rutas protegidas se declaran en el `matcher` de `src/middleware.ts`. `/cart` queda
+  fuera a propósito: un invitado puede ver su carrito y el login se le pide en el checkout.
+- `/api/products` **pagina de a 8**. Devuelve `{ products, totalPages, currentPage }`, no
+  un array. Para traer todo hay que pasar `?limit=100`.
+- Las imágenes de productos son URLs de tiendas externas y varias se caen con el tiempo.
+  Usar el componente `ProductImage`, que muestra un reemplazo con `onError`.
