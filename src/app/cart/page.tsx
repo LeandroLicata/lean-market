@@ -72,7 +72,7 @@ export default function CartPage() {
 
   if (isLoading || isMerging) {
     return (
-      <div className="flex justify-center items-center h-[60vh]">
+      <div className="flex justify-center items-center h-full">
         <p className="text-lg text-gray-500">
           {isMerging ? "Recuperando tu carrito..." : "Cargando carrito..."}
         </p>
@@ -82,7 +82,7 @@ export default function CartPage() {
 
   if (error) {
     return (
-      <div className="flex flex-col justify-center items-center h-[60vh] gap-4">
+      <div className="flex flex-col justify-center items-center h-full gap-4">
         <p className="text-lg text-red-500">{error}</p>
         <button
           onClick={refetch}
@@ -96,7 +96,7 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
+      <div className="flex flex-col items-center justify-center h-full gap-4">
         <p className="text-lg text-gray-600">Tu carrito está vacío 🛒</p>
         <Link
           href="/products"

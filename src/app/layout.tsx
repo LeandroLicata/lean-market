@@ -28,12 +28,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
+      {/* Columna de alto completo para que el footer quede abajo de la ventana
+          aunque la página tenga poco contenido. Los providers no renderizan
+          DOM, así que navbar, main y footer son hijos directos del body. */}
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-dvh flex flex-col`}
       >
         <Providers>
           <Navbar />
-          <main>{children}</main>
+          <main className="flex-1">{children}</main>
           <Footer />
         </Providers>
       </body>
