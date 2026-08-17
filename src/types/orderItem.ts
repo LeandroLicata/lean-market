@@ -5,6 +5,7 @@ export interface OrderItem {
   orderId: string;
   productId: string;
   quantity: number;
-  priceAtPurchase: number;
+  /** Llega como string: en Prisma es Decimal. */
+  priceAtPurchase: number | string;
   product?: Product;
 }

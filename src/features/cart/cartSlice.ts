@@ -7,6 +7,7 @@ import {
   type PayloadAction,
 } from "@reduxjs/toolkit";
 import axios from "axios";
+import { confirmOrder } from "@/features/order/orderSlice";
 import { Cart, ResolvedCart } from "@/types/cart";
 import { CartItem } from "@/types/cartItem";
 import { Product } from "@/types/product";
@@ -245,6 +246,13 @@ const cartSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    // Confirmar la compra vacía el carrito en el servidor: se refleja acá sin
+    // tener que volver a pedirlo.
+    builder.addCase(confirmOrder.fulfilled, (state) => {
+      state.cart.items = [];
+      state.adjustments = [];
+    });
+
     builder.addCase(fetchCart.fulfilled, (state, action) => {
       state.status.fetch = "succeeded";
       state.cart = action.payload;
