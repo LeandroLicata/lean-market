@@ -14,7 +14,7 @@ export default function ProductDetailPage() {
     id,
   });
 
-  const { addToCart, isLoading: cartLoading } = useCart();
+  const { addToCart, isMutating: isAddingToCart } = useCart();
   const [quantity, setQuantity] = useState(1); // cantidad seleccionada
 
   const handleAddToCart = async () => {
@@ -41,7 +41,7 @@ export default function ProductDetailPage() {
     }
 
     try {
-      await addToCart(productDetail.id, quantity);
+      await addToCart(productDetail, quantity);
 
       Swal.fire({
         icon: "success",
@@ -51,11 +51,16 @@ export default function ProductDetailPage() {
         showConfirmButton: false,
         timer: 1500,
       });
-    } catch {
+    } catch (error) {
       Swal.fire({
         icon: "error",
         title: "Error",
-        text: "No se pudo agregar el producto al carrito.",
+        // El thunk propaga el mensaje del servidor, que explica el motivo real
+        // (por ejemplo, cuánto stock quedaba).
+        text:
+          typeof error === "string"
+            ? error
+            : "No se pudo agregar el producto al carrito.",
         confirmButtonColor: "#d33",
       });
     }
@@ -157,14 +162,14 @@ export default function ProductDetailPage() {
           {/* Botón agregar al carrito */}
           <button
             onClick={handleAddToCart}
-            disabled={stock <= 0 || cartLoading}
+            disabled={stock <= 0 || isAddingToCart}
             className={`px-8 py-3 flex items-center justify-center gap-2 rounded-xl shadow-md transition transform hover:scale-105 ${
               stock > 0
                 ? "bg-green-500 hover:bg-green-600 text-white"
                 : "bg-gray-400 text-gray-200 cursor-not-allowed"
             }`}
           >
-            {cartLoading ? "Agregando..." : "🛒 Agregar al carrito"}
+            {isAddingToCart ? "Agregando..." : "🛒 Agregar al carrito"}
           </button>
         </div>
       </div>

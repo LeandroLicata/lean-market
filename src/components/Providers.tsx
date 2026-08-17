@@ -3,6 +3,7 @@
 import { Provider as ReduxProvider } from "react-redux";
 import { SessionProvider } from "next-auth/react";
 import { store } from "@/store/store";
+import CartSync from "./CartSync";
 
 export default function Providers({
   children,
@@ -11,7 +12,10 @@ export default function Providers({
 }) {
   return (
     <SessionProvider refetchInterval={60}>
-      <ReduxProvider store={store}>{children}</ReduxProvider>
+      <ReduxProvider store={store}>
+        <CartSync />
+        {children}
+      </ReduxProvider>
     </SessionProvider>
   );
 }
