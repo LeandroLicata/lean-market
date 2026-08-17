@@ -9,9 +9,19 @@ Prisma + PostgreSQL (Supabase), NextAuth v4 y Redux Toolkit.
 npm run dev          # dev server (turbopack)
 npm run build
 npm run lint
+npm run seed:stock   # carga stock en los productos que están en 0
 npx prisma generate  # corre solo en postinstall
 npx prisma db push   # aplicar cambios de schema (ver abajo)
 ```
+
+No correr `next build` con el dev server levantado: los dos escriben en `.next` y el
+dev server queda sirviendo "missing required error components". Si pasa, matar el proceso,
+borrar `.next` y volver a levantarlo.
+
+`prisma/seed-stock.mjs` existe porque `stock` se agregó al schema con `@default(0)`
+después de haber cargado los productos y quedaron todos sin stock. Es idempotente y por
+defecto solo toca los que están en 0; con `-- --force` recalcula todos. Deja dos productos
+sin stock a propósito, para que el estado "Sin stock" de la tienda sea visible.
 
 ## Base de datos: usar `db push`, NO `migrate`
 
