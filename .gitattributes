@@ -1,0 +1,13 @@
+# El repo guarda todo con LF, independientemente del sistema donde se trabaje.
+# Sin esto, en Windows git avisa "LF will be replaced by CRLF" en cada archivo
+# nuevo y el mismo archivo puede terminar con finales distintos según la máquina.
+* text=auto eol=lf
+
+# Binarios: sin conversión.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.svg text eol=lf
