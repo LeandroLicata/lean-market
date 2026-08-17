@@ -19,8 +19,10 @@ export const store = configureStore({
 let lastPersisted: string | null = null;
 
 store.subscribe(() => {
-  const { mode, cart } = store.getState().cart;
-  if (mode !== "guest") return;
+  const { mode, cart, hydrated } = store.getState().cart;
+  // Sin el `hydrated` el estado inicial vacío se guardaría antes de leer el
+  // localStorage, y el carrito del invitado se perdería en cada navegación.
+  if (mode !== "guest" || !hydrated) return;
 
   const serialized = JSON.stringify(cart.items);
   if (serialized === lastPersisted) return;

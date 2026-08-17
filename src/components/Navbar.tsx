@@ -8,6 +8,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { useNavbar } from "@/hooks/useNavbar";
 import { useSession, signOut } from "next-auth/react";
+import CartLink from "./CartLink";
 
 export default function Navbar() {
   const { search, setSearch, isMenuOpen, toggleMenu, closeMenu, handleSearch } =
@@ -16,9 +17,9 @@ export default function Navbar() {
   const { data: session, status } = useSession();
   const isLoadingSession = status === "loading";
 
+  // El carrito va aparte porque lleva el contador de ítems.
   const links = [
     { href: "/products", label: "Productos" },
-    { href: "/cart", label: "Carrito" },
     { href: "/about", label: "Acerca de" },
   ];
 
@@ -30,17 +31,17 @@ export default function Navbar() {
           <img
             src="/images/lean-market-mini.png"
             alt="Logo grande"
-            className="hidden md:block h-10"
+            className="hidden lg:block h-10"
           />
           <img
             src="/images/logo.png"
             alt="Logo pequeño"
-            className="block md:hidden h-8"
+            className="block lg:hidden h-8"
           />
         </Link>
 
         {/* Barra de búsqueda */}
-        <form onSubmit={handleSearch} className="flex flex-1 max-w-lg">
+        <form onSubmit={handleSearch} className="flex flex-1 min-w-0 max-w-lg">
           <input
             type="search"
             value={search}
@@ -57,8 +58,9 @@ export default function Navbar() {
           </button>
         </form>
 
-        {/* Links desktop */}
-        <div className="hidden md:flex items-center space-x-4">
+        {/* Links desktop. Va en lg y no en md: con el carrito, los pedidos y la
+            sesión ya no entra todo en una fila de tablet. */}
+        <div className="hidden lg:flex items-center space-x-4 shrink-0 whitespace-nowrap">
           {links.map((link) => (
             <Link
               key={link.label}
@@ -68,6 +70,8 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
+
+          <CartLink />
 
           {isLoadingSession ? (
             // Placeholder para que los botones de sesión no parpadeen al cargar.
@@ -84,7 +88,8 @@ export default function Navbar() {
                 Mis pedidos
               </Link>
               <span
-                className="text-sm font-normal text-primary/70 max-w-[12rem] truncate"
+                // Se oculta antes de xl para no comerle el ancho al buscador.
+                className="hidden xl:inline text-sm font-normal text-primary/70 max-w-[12rem] truncate"
                 title={session.user.email ?? undefined}
               >
                 {session.user.email}
@@ -113,7 +118,7 @@ export default function Navbar() {
         </div>
 
         {/* Menú móvil */}
-        <button className="md:hidden p-2" onClick={toggleMenu}>
+        <button className="lg:hidden p-2" onClick={toggleMenu}>
           {isMenuOpen ? (
             <XMarkIcon className="h-6 w-6 text-white" />
           ) : (
@@ -124,7 +129,7 @@ export default function Navbar() {
 
       {/* Menú móvil */}
       {isMenuOpen && (
-        <div className="md:hidden mt-4 space-y-2">
+        <div className="lg:hidden mt-4 space-y-2">
           {links.map((link) => (
             <Link
               key={link.label}
@@ -135,6 +140,11 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
+
+          <CartLink
+            className="justify-center px-4 py-2 hover:bg-gray-200"
+            onClick={closeMenu}
+          />
 
           {isLoadingSession ? (
             <div

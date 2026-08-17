@@ -21,6 +21,12 @@ type Operation = "fetch" | "mutate" | "merge";
 interface CartState {
   cart: Cart;
   mode: CartMode;
+  /**
+   * En modo invitado, si ya se leyó el localStorage. Hasta que sea `true` el
+   * carrito no se persiste: si no, el estado inicial vacío pisaría lo guardado
+   * antes de poder cargarlo.
+   */
+  hydrated: boolean;
   /** Ajustes por stock del último validate o merge, listos para mostrar. */
   adjustments: string[];
   status: Record<Operation, Status>;
@@ -34,6 +40,7 @@ const initialState: CartState = {
   // del cliente para no romper la hidratación.
   cart: EMPTY_CART,
   mode: "guest",
+  hydrated: false,
   adjustments: [],
   status: { fetch: "idle", mutate: "idle", merge: "idle" },
   error: { fetch: null, mutate: null, merge: null },
@@ -165,6 +172,7 @@ const cartSlice = createSlice({
       if (state.mode === action.payload) return;
       state.mode = action.payload;
       state.cart = EMPTY_CART;
+      state.hydrated = false;
       state.status = { fetch: "idle", mutate: "idle", merge: "idle" };
       state.error = { fetch: null, mutate: null, merge: null };
     },
@@ -172,6 +180,7 @@ const cartSlice = createSlice({
     /** Carga inicial del carrito de invitado desde localStorage. */
     guestCartHydrated(state, action: PayloadAction<CartItem[]>) {
       state.cart = { id: null, items: action.payload };
+      state.hydrated = true;
     },
 
     guestItemAdded(
