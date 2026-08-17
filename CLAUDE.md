@@ -25,6 +25,11 @@ base como divergente del historial y puede ofrecer resetearla, lo que borraría 
 Si en algún momento se quiere volver a migraciones, hay que baselinear primero
 (`migrate diff` contra la base + `migrate resolve --applied`).
 
+Después de regenerar el cliente, VS Code sigue mostrando los tipos viejos hasta que se
+reinicie su TS server (`Ctrl+Shift+P` → "TypeScript: Restart TS Server"). Si aparece un
+error sobre una propiedad de Prisma que sí existe en el schema, verificar con
+`npx tsc --noEmit` antes de tocar el código: si tsc pasa, es caché del IDE.
+
 ## Convenciones del código
 
 - **API routes son de una línea.** La lógica vive en `src/server/handlers/<recurso>.ts` y
