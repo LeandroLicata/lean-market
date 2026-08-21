@@ -1,4 +1,8 @@
-# LeanMarket
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## LeanMarket
 
 E-commerce de electrónica hecho con Next.js 15 (App Router), TypeScript, TailwindCSS,
 Prisma + PostgreSQL (Supabase), NextAuth v4 y Redux Toolkit.
@@ -8,11 +12,16 @@ Prisma + PostgreSQL (Supabase), NextAuth v4 y Redux Toolkit.
 ```bash
 npm run dev          # dev server (turbopack)
 npm run build
-npm run lint
+npm run lint         # eslint (next lint)
+npx tsc --noEmit     # chequeo de tipos; el build no es la forma rápida de verificar
 npm run seed:stock   # carga stock en los productos que están en 0
 npx prisma generate  # corre solo en postinstall
 npx prisma db push   # aplicar cambios de schema (ver abajo)
 ```
+
+**No hay tests ni framework de testing en el proyecto.** Para verificar un cambio:
+`npx tsc --noEmit` + `npm run lint`, y si hace falta probarlo de verdad, `npm run dev`.
+No inventar un runner ni agregar uno sin que lo pidan.
 
 No correr `next build` con el dev server levantado: los dos escriben en `.next` y el
 dev server queda sirviendo "missing required error components". Si pasa, matar el proceso,
@@ -109,6 +118,17 @@ Todavía no hay pasarela de pago: la orden queda en `pending`.
 - El estado de carga se modela con `Status` (`src/types/status.ts`) y, cuando un slice
   tiene varias operaciones, se usa un `Record` por operación en vez de un `status` global
   (ver `orderSlice`).
+- **Los mensajes de error los escribe el servidor.** Los handlers responden
+  `{ error: "..." }` con el texto ya en español; los thunks se declaran con
+  `rejectValue: string` y lo rescatan con el helper `asMessage`, que prioriza el mensaje
+  del servidor sobre el fallback. Los componentes usan `.unwrap()` para que llegue tal
+  cual. No traducir ni reescribir esos mensajes en el cliente.
+- `src/server/handlers/cart.ts` tiene helpers de respuesta (`unauthorized`, `badRequest`,
+  `notFound`, `serverError`) que conviene reusar al agregar handlers ahí. Los conflictos
+  de stock van con **409**, no 400.
+- **Los slices pueden reaccionar a acciones de otros slices.** `cartSlice` escucha
+  `confirmOrder.fulfilled` (de `orderSlice`) para vaciar el carrito: no agregar un
+  `clearCart` manual después de comprar, ya está cubierto.
 - Tipos compartidos en `src/types/`, uno por entidad.
 - Alias de imports: `@/` → `src/`.
 - Diálogos y feedback al usuario con SweetAlert2 (`Swal.fire`).
@@ -126,9 +146,17 @@ Todavía no hay pasarela de pago: la orden queda en `pending`.
 - `session.user.id` existe porque los callbacks `jwt`/`session` de `src/lib/auth.ts` lo
   ponen. Los handlers lo leen con `getSessionUserId()`; no hace falta buscar el usuario
   por email.
+- **El middleware protege páginas, no la API.** Cada handler que necesita sesión llama a
+  `getSessionUserId()` y devuelve 401 por su cuenta (carrito, órdenes). Ojo: los handlers
+  de `products` y `brands` mutan **sin ninguna validación de sesión** — si se arma el ABM
+  de productos, la auth hay que agregarla ahí.
 - Las rutas protegidas se declaran en el `matcher` de `src/middleware.ts`. `/cart` queda
   fuera a propósito: un invitado puede ver su carrito y el login se le pide en el checkout.
 - `/api/products` **pagina de a 8**. Devuelve `{ products, totalPages, currentPage }`, no
   un array. Para traer todo hay que pasar `?limit=100`.
+- `next.config.js` habilita `hostname: "**"` en `images.remotePatterns`, por eso las
+  imágenes de cualquier tienda externa cargan sin tocar config.
+- `getRandomProducts` (home) usa SQL crudo (`ORDER BY RANDOM()`), así que devuelve las
+  columnas de `Products` sin el `include` de `Brands`, a diferencia del resto.
 - Las imágenes de productos son URLs de tiendas externas y varias se caen con el tiempo.
   Usar el componente `ProductImage`, que muestra un reemplazo con `onError`.
