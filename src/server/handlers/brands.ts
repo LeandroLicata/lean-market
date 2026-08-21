@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { denyIfNotAdmin } from "@/lib/auth";
 
 export async function createBrand(req: Request) {
+  const denied = await denyIfNotAdmin();
+  if (denied) return denied;
+
   try {
     const body = await req.json();
     const { name, logo_url } = body;
@@ -49,6 +53,9 @@ export async function updateBrand(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const denied = await denyIfNotAdmin();
+  if (denied) return denied;
+
   try {
     const { id } = await params;
 

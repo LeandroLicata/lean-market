@@ -15,6 +15,7 @@ npm run build
 npm run lint         # eslint (next lint)
 npx tsc --noEmit     # chequeo de tipos; el build no es la forma rápida de verificar
 npm run seed:stock   # carga stock en los productos que están en 0
+npm run make:admin -- <email>  # da rol admin a un usuario ya registrado
 npx prisma generate  # corre solo en postinstall
 npx prisma db push   # aplicar cambios de schema (ver abajo)
 ```
@@ -147,9 +148,14 @@ Todavía no hay pasarela de pago: la orden queda en `pending`.
   ponen. Los handlers lo leen con `getSessionUserId()`; no hace falta buscar el usuario
   por email.
 - **El middleware protege páginas, no la API.** Cada handler que necesita sesión llama a
-  `getSessionUserId()` y devuelve 401 por su cuenta (carrito, órdenes). Ojo: los handlers
-  de `products` y `brands` mutan **sin ninguna validación de sesión** — si se arma el ABM
-  de productos, la auth hay que agregarla ahí.
+  `getSessionUserId()` y devuelve 401 por su cuenta (carrito, órdenes).
+- **Las mutaciones de `products` y `brands` son solo para admin.** Empiezan con
+  `denyIfNotAdmin()` (`src/lib/auth.ts`), que responde 401 sin sesión y 403 sin rol. Los
+  GET quedan públicos. Al agregar mutaciones nuevas ahí, va la misma guarda.
+- `Users.role` es un enum (`user` | `admin`) con default `user`: **nadie puede
+  registrarse como admin**. El primero se promueve con `npm run make:admin -- email`
+  (y `-- email --quitar` lo revierte). El rol se lee de la DB en cada mutación, no del
+  JWT, así que quitarlo tiene efecto inmediato sin necesidad de re-loguear.
 - Las rutas protegidas se declaran en el `matcher` de `src/middleware.ts`. `/cart` queda
   fuera a propósito: un invitado puede ver su carrito y el login se le pide en el checkout.
 - `/api/products` **pagina de a 8**. Devuelve `{ products, totalPages, currentPage }`, no

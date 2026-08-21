@@ -32,10 +32,16 @@ model Products {
   specifications Json?
 }
    
+enum Role {
+  user
+  admin
+}
+
 model Users {
   id             String   @id @default(uuid()) @db.Uuid
   email          String   @unique @db.VarChar(255)
   hashedPassword String   @db.VarChar(255)
+  role           Role     @default(user)
   cart           Carts?
   orders         Orders[]
   createdAt      DateTime @default(now())

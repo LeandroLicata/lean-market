@@ -1,3 +1,4 @@
+import { NextResponse } from "next/server";
 import type { NextAuthOptions } from "next-auth";
 import { getServerSession } from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -70,4 +71,37 @@ export const authOptions: NextAuthOptions = {
 export async function getSessionUserId() {
   const session = await getServerSession(authOptions);
   return session?.user?.id ?? null;
+}
+
+/**
+ * Devuelve la respuesta de error si quien llama no es admin, o `null` si puede
+ * seguir. Se usa como guarda al principio de cada mutación:
+ *
+ *   const denied = await denyIfNotAdmin();
+ *   if (denied) return denied;
+ *
+ * El rol se lee de la DB en cada llamada en vez de guardarlo en el JWT: son
+ * mutaciones poco frecuentes, y así quitarle el rol a alguien tiene efecto de
+ * inmediato en lugar de esperar a que su token expire.
+ */
+export async function denyIfNotAdmin() {
+  const userId = await getSessionUserId();
+
+  if (!userId) {
+    return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+  }
+
+  const user = await prisma.users.findUnique({
+    where: { id: userId },
+    select: { role: true },
+  });
+
+  if (user?.role !== "admin") {
+    return NextResponse.json(
+      { error: "Necesitás permisos de administrador" },
+      { status: 403 }
+    );
+  }
+
+  return null;
 }

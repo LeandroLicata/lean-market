@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { denyIfNotAdmin } from "@/lib/auth";
 import { Prisma } from "@prisma/client";
 
 export async function getProducts(request: Request) {
@@ -67,6 +68,9 @@ export async function getProducts(request: Request) {
 }
 
 export async function createProduct(request: Request) {
+  const denied = await denyIfNotAdmin();
+  if (denied) return denied;
+
   try {
     const body = await request.json();
     const {
@@ -190,6 +194,9 @@ export async function updateProduct(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const denied = await denyIfNotAdmin();
+  if (denied) return denied;
+
   try {
     const { id } = await params;
     const body = await request.json();

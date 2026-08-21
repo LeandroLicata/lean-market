@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "seed:stock": "node --env-file=.env prisma/seed-stock.mjs",
+    "make:admin": "node --env-file=.env prisma/make-admin.mjs",
     "postinstall": "prisma generate"
   },
   "dependencies": {
