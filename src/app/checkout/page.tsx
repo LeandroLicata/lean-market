@@ -45,7 +45,7 @@ export default function CheckoutPage() {
   // invitado todavía se está fusionando y parecería vacío.
   if (isLoading || isMerging) {
     return (
-      <div className="flex justify-center items-center h-full">
+      <div className="flex justify-center items-center flex-1">
         <p className="text-lg text-gray-500">
           {isMerging ? "Recuperando tu carrito..." : "Cargando tu pedido..."}
         </p>
@@ -55,7 +55,7 @@ export default function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-full gap-4">
+      <div className="flex flex-col items-center justify-center flex-1 gap-4">
         <p className="text-lg text-gray-600">
           No hay nada para comprar todavía 🛒
         </p>

@@ -9,6 +9,7 @@
     "lint": "next lint",
     "seed:stock": "node --env-file=.env prisma/seed-stock.mjs",
     "make:admin": "node --env-file=.env prisma/make-admin.mjs",
+    "set:password": "node --env-file=.env prisma/set-password.mjs",
     "postinstall": "prisma generate"
   },
   "dependencies": {

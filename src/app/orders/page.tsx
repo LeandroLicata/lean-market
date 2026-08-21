@@ -18,7 +18,7 @@ export default function OrdersPage() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-full">
+      <div className="flex justify-center items-center flex-1">
         <p className="text-lg text-gray-500">Cargando tus pedidos...</p>
       </div>
     );
@@ -26,7 +26,7 @@ export default function OrdersPage() {
 
   if (error) {
     return (
-      <div className="flex flex-col justify-center items-center h-full gap-4">
+      <div className="flex flex-col justify-center items-center flex-1 gap-4">
         <p className="text-lg text-red-500">{error}</p>
         <button
           onClick={refetch}
@@ -40,7 +40,7 @@ export default function OrdersPage() {
 
   if (orders.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-full gap-4">
+      <div className="flex flex-col items-center justify-center flex-1 gap-4">
         <p className="text-lg text-gray-600">Todavía no hiciste pedidos</p>
         <Link
           href="/products"
